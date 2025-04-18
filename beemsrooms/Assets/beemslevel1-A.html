@@ -1,0 +1,181 @@
+<html>
+<head>
+	<title>Beemslevel 1-A</title>
+	<link rel="icon" href="stupidcat.png">
+	<style>
+		body {
+			background-image: url("stupidcat.png"); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+		}
+		#gameCanvas {
+			background-color: lightblue;
+			border: 10px solid black;
+			display: block;
+			margin: 0 auto;  /* Centers horizontally */
+		}
+		button {
+			margin: 0 auto;  /* Centers horizontally */
+			display: block;
+			padding: 10px 20px;          /* Spacing inside the button */
+			background-color: #4CAF50;   /* Green background */
+			color: white;                /* Text color */
+			font-size: 16px;              /* Text size */
+			border: none;                /* Removes the default border */
+			border-radius: 12px;         /* Rounded corners */
+			cursor: pointer;             /* Pointer cursor on hover */
+			transition: background-color 0.3s ease, transform 0.2s; /* Smooth transition */
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+		}
+		button:hover {
+			background-color: #45a049;   /* Darker green when hovered */
+			transform: translateY(-2px); /* Slight lift effect */
+		}
+		button:active {
+			transform: translateY(2px);  /* Slight dip when clicked */
+		}
+	</style>
+</head>
+<body>
+<button id="Left">Left</button>
+<button id="Down">Down</button>
+<button id="Up">Up</button>
+<button id="Right">Right</button>
+<canvas id="gameCanvas" width="500" height="500"></canvas>
+<button id="gotolevel1">go back to level 1</button>
+<script src="teleport.js"></script>
+<script>
+    var x = 0;
+    var y = 0;
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d"); // 2D drawing mode
+
+    const left = document.getElementById("Left");
+    const down = document.getElementById("Down");
+    const up = document.getElementById("Up");
+    const right = document.getElementById("Right");
+
+    const player = new Image(); // Create a new image object
+    player.src = "beemscat.png"; // Set the image source (change path to your image)
+
+    // Set fixed width and height for the image
+    const scaledWidth = canvas.width / 6;  // Set the width to a fraction of the canvas
+    const scaledHeight = canvas.height / 6; // Set the height to a fraction of the canvas
+
+    // Define walls (x, y, width, height)
+    const walls = [
+        { x: 0, y: 100, width: 400, height: 50 },
+        { x: 100, y: 250, width: 400, height: 150 },
+        { x: 0, y: -200, width: 500, height: 200 },
+        { x: 0, y: 500, width: 500, height: 200 },
+        { x: -1, y: 0, width: 1, height: 500 },
+        { x: 501, y: 0, width: 1, height: 500 }
+    ];
+
+    const greenBlock = { x: 400, y: 400, width: 100, height: 100 };
+
+    // Wait for the image to be fully loaded before drawing it
+    player.onload = function() {
+        drawPlayer();  // Draw the player once the image is loaded
+    };
+
+    // Optionally, you can add logic to move the player around
+	left.addEventListener("click", () => { movePlayer(-20, 0); });
+	down.addEventListener("click", () => { movePlayer(0,20); });
+	up.addEventListener("click", () => { movePlayer(0,-20); });
+	right.addEventListener("click", () => { movePlayer(20, 0); });
+	
+	const goback = document.getElementById("gotolevel1");
+	goback.addEventListener("click", gobacklv1)
+	function gobacklv1() {
+		window.location.href = "beemslevel1.html";
+	}
+
+    // Function to move the player with boundary and wall collision checks
+    function movePlayer(dx, dy) {
+        // Calculate potential new position
+        let newX = x + dx;
+        let newY = y + dy;
+
+        // Check for wall collisions
+        if (!checkCollisions(newX, newY)) {
+            // If no collision, update position
+            x = newX;
+            y = newY;
+        } else {
+            // If there is a collision, call the collision function
+            onCollision();
+        }
+
+        // Check if the player touches the green block after moving
+        checkGreenBlockCollision(newX, newY);
+
+        drawPlayer(); // Redraw the player at the new position
+    }
+
+    // Function to check if the player collides with any walls
+    function checkCollisions(newX, newY) {
+        for (let i = 0; i < walls.length; i++) {
+            const wall = walls[i];
+            if (
+                newX < wall.x + wall.width &&
+                newX + scaledWidth > wall.x &&
+                newY < wall.y + wall.height &&
+                newY + scaledHeight > wall.y
+            ) {
+                return true;  // Collision detected
+            }
+        }
+        return false;  // No collision
+    }
+
+    // Function to check if the player collides with the green block
+    function checkGreenBlockCollision(newX, newY) {
+        if (
+            newX < greenBlock.x + greenBlock.width &&
+            newX + scaledWidth > greenBlock.x &&
+            newY < greenBlock.y + greenBlock.height &&
+            newY + scaledHeight > greenBlock.y
+        ) {
+            showMessage();  // Show the message when collision is detected
+        }
+    }
+
+    // Function to show the <h1> message
+    function showMessage() {
+        // Check if the <h1> already exists, to avoid adding multiple times
+        if (!document.querySelector("h1")) {
+            const h1 = document.createElement("h1");
+            h1.textContent = "the first 2 numbers of the code are 93";
+			h1.style.fontSize = "48px";
+            document.body.appendChild(h1);
+        }
+    }
+
+    // Function to handle collisions (this can be customized to do anything you want)
+    function onCollision() {
+        TeleportToStart(); // Assuming this function exists in teleport.js
+    }
+
+    // Draw the player, walls, and green block
+    function drawPlayer() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas before redrawing
+
+        // Draw the walls
+        ctx.fillStyle = "red"; // Set color for walls
+        for (let i = 0; i < walls.length; i++) {
+            const wall = walls[i];
+            ctx.fillRect(wall.x, wall.y, wall.width, wall.height);  // Draw each wall
+        }
+
+        // Draw the green block
+        ctx.fillStyle = "green";
+        ctx.fillRect(greenBlock.x, greenBlock.y, greenBlock.width, greenBlock.height);
+
+        // Draw the player
+        ctx.drawImage(player, x, y, scaledWidth, scaledHeight); // Redraw the player with fixed size
+    }
+</script>
+</body>
+</html> 

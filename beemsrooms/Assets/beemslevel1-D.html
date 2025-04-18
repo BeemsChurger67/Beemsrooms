@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 1-D</title>
+    <link rel="icon" href="blackwhitegradient.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Tektur", sans-serif;
+            font-weight: 400;
+            background-image: url("blackwhitegradient.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container for text */
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding-top: 50px;
+            color: rgb(255, 255, 255);
+            font-size: 70px;
+        }
+
+        h1 {
+            font-weight: 700;
+        }
+
+        /* Container for particles */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            border-radius: 50%;
+            opacity: 1;
+            transition: transform 3s linear, opacity 3s ease-out;
+        }
+
+        /* Puzzle Area */
+        .puzzle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 40px;
+            color: white;
+            z-index: 2;
+        }
+
+        #answer {
+            font-size: 30px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <h1>Welcome to Bingerland</h1>
+    </div>
+
+    <div class="particles-container"></div>
+
+    <!-- Puzzle Section -->
+    <div class="puzzle" id="puzzle">
+        <div id="question"></div>
+        <input type="text" id="answer" placeholder="Unscramble the word" />
+        <button onclick="checkAnswer()">Submit</button>
+    </div>
+    <script src="teleport.js"></script>
+    <script>
+        // Word scramble logic
+        const words = [
+            { scrambled: 'bemse', correct: 'beems' },
+            { scrambled: 'amgis', correct: 'sigma' },
+            { scrambled: 'idiskib', correct: 'skibidi' },
+            { scrambled: 'frat (its not raft)', correct: 'fart' }
+        ];
+        let currentWordIndex = 0; // Keeps track of current word
+        let correctAnswers = 0; // Tracks how many answers are correct
+
+        // Display the first scrambled word
+        function displayQuestion() {
+            if (currentWordIndex < words.length) {
+                let currentWord = words[currentWordIndex];
+                document.getElementById("question").innerHTML = `Unscramble this word: <strong>${currentWord.scrambled}</strong>`;
+            } else {
+                onAllQuestionsAnswered(); // All questions answered
+            }
+        }
+
+        // Function to check the answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById("answer").value.toLowerCase().trim();
+
+            if (userAnswer === words[currentWordIndex].correct) {
+                correctAnswers++;
+                currentWordIndex++; // Move to the next word
+                document.getElementById("answer").value = ""; // Clear the input
+
+                if (currentWordIndex < words.length) {
+                    displayQuestion(); // Show next scrambled word
+                } else {
+                    onAllQuestionsAnswered(); // Execute the function when all questions are answered
+                }
+            } else {
+                // Incorrect answer, teleport to start
+                alert(" ");
+                window.location.href = "Limbo.html";
+            }
+        }
+
+        // Function called when all questions are answered correctly
+        function onAllQuestionsAnswered() {
+            alert(":)");
+            // Call a function or execute any code here
+            // For example, redirecting to the next level:
+            window.location.href = "beemslevel4.html";
+        }
+
+        // Particle animation logic
+        function createParticle() {
+            const particle = document.createElement("div");
+            particle.classList.add("particle");
+            document.querySelector(".particles-container").appendChild(particle);
+
+            // Random start position at the bottom
+            particle.style.left = Math.random() * window.innerWidth + "px";
+            particle.style.bottom = "0px"; // Start from the bottom
+
+            // Random size
+            let size = Math.random() * 15 + 5; 
+            particle.style.width = size + "px";
+            particle.style.height = size + "px";
+
+            // Random spin
+            let spinAngle = Math.random() * 360;
+            particle.style.transform = `rotate(${spinAngle}deg)`;
+
+            // Delay execution to allow the element to render first
+            setTimeout(() => {
+                particle.style.transform = `translateY(-100vh) rotate(${spinAngle + 720}deg)`;
+                particle.style.opacity = "0";
+            }, 10);
+
+            // Remove after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 3000);
+        }
+
+        // Create particles continuously
+        setInterval(createParticle, 50);
+
+        // Initialize the first question
+        displayQuestion();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Beemslevel 7</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='teleport.js'></script>
+    <link rel="icon" href="truecat.png">
+    <style>
+        body {
+            font-family: Impact;
+            text-align: center;
+            background-image: url('grass.png');
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #gameCanvas {
+            margin-top: 50px;
+            border: 12px solid #000000;
+            background-image: url('spinachbg.png');
+            cursor: none;
+        }
+        #startbutton {
+            padding: 10px 20px;
+            font-size: 300%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #respectgame {
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <button id="startbutton" onclick="startgame()">Start Game</button>
+    <div id="respectgame">
+        <canvas id='gameCanvas' width='800' height='800'></canvas>
+        <br>
+        <button id="nextlevel" onclick="window.location.href='beemslevel10.html'">Teleport to the next level</button>
+    </div>
+    <script>
+        let lastTime = 0;
+        const fps = 60;
+        const interval = 1000 / fps;
+        document.getElementById("nextlevel").style.display = "none";
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const playerimg = new Image();
+        playerimg.src = "respectcat2.png";
+        const projectileImg = new Image();
+        projectileImg.src = "shockedcat.png"; // Load the projectile image
+        const laserWarnImg = new Image();
+        laserWarnImg.src = "laserwarn.png"; // Load the warning image
+        const catExplodeImg = new Image();
+        catExplodeImg.src = "catexplode.png"; // Load the explosion image
+        let mouseX = 0;
+        let mouseY = 0;
+    
+        // Timer properties
+        let timer = 30; // 45 seconds
+        const timerElement = document.createElement("div");
+        timerElement.style.position = "absolute";
+        timerElement.style.top = "10px";
+        timerElement.style.left = "50%";
+        timerElement.style.transform = "translateX(-50%)";
+        timerElement.style.fontSize = "50px";
+        timerElement.style.color = "white";
+        timerElement.style.fontFamily = "Impact";
+        document.body.appendChild(timerElement);
+    
+        function updateTimer() {
+            timerElement.textContent = `Time Left: ${timer}s`;
+            if (timer <= 0) {
+                window.location.href = "beemslevel8.html";
+            } else {
+                timer--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+    
+        // Projectile properties
+        const projectiles = [];
+        const explosionProjectiles = [];
+        const projectileSpeed = 3;
+        const projectileSize = 30; // Adjusted size for the image
+        const playerSize = 25; // Half the width/height of the player
+    
+        // Spawn projectiles from random sides
+        function spawnProjectile() {
+            const side = Math.floor(Math.random() * 4); // 0: left, 1: top, 2: right, 3: bottom
+            let x, y, dx, dy;
+    
+            if (side === 0) { // Left side
+                x = 0;
+                y = Math.random() * canvas.height;
+                dx = projectileSpeed;
+                dy = 0;
+            } else if (side === 1) { // Top side
+                x = Math.random() * canvas.width;
+                y = 0;
+                dx = 0;
+                dy = projectileSpeed;
+            } else if (side === 2) { // Right side
+                x = canvas.width;
+                y = Math.random() * canvas.height;
+                dx = -projectileSpeed;
+                dy = 0;
+            } else { // Bottom side
+                x = Math.random() * canvas.width;
+                y = canvas.height;
+                dx = 0;
+                dy = -projectileSpeed;
+            }
+    
+            projectiles.push({ x, y, dx, dy });
+        }
+    
+        // Spawn explosion projectiles
+    // Spawn explosion projectiles
+    function spawnExplosionProjectile() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+
+        explosionProjectiles.push({
+            x,
+            y,
+            warning: true, // Initially showing laserwarn.png
+            spawnTime: performance.now(), // Record the time it was spawned
+        });
+    }
+    function updateProjectiles() {
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            const p = projectiles[i];
+            p.x += p.dx;
+            p.y += p.dy;
+    
+            // Check collision with player
+            if (
+                p.x > mouseX - playerSize &&
+                p.x < mouseX + playerSize &&
+                p.y > mouseY - playerSize &&
+                p.y < mouseY + playerSize
+            ) {
+                window.location.href = "../beemslevel hub.html"; // Redirect to the next level
+                return;
+            }
+    
+            // Remove projectiles that go off-screen
+            if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                projectiles.splice(i, 1);
+            }
+        }
+    }
+    function drawProjectiles() {
+        for (const p of projectiles) {
+            ctx.drawImage(projectileImg, p.x - projectileSize / 2, p.y - projectileSize / 2, projectileSize, projectileSize);
+        }
+    }
+
+    // Update explosion projectiles
+    function updateExplosionProjectiles(currentTime) {
+        for (let i = explosionProjectiles.length - 1; i >= 0; i--) {
+            const p = explosionProjectiles[i];
+
+            // Switch from warning to explosion after 500ms
+            if (p.warning && currentTime - p.spawnTime >= 500) {
+                p.warning = false; // Switch to explosion
+            }
+
+            // Check collision with player
+            if (
+                p.x > mouseX - playerSize &&
+                p.x < mouseX + playerSize &&
+                p.y > mouseY - playerSize &&
+                p.y < mouseY + playerSize
+            ) {
+                alert("You were hit by an explosion! Game Over!");
+                document.location.reload(); // Reload the game
+                return;
+            }
+        }
+    }
+
+    // Draw explosion projectiles
+    function drawExplosionProjectiles() {
+        for (const p of explosionProjectiles) {
+            if (p.warning) {
+                ctx.drawImage(laserWarnImg, p.x - projectileSize / 2, p.y - projectileSize / 2, projectileSize, projectileSize);
+            } else {
+                ctx.drawImage(catExplodeImg, p.x - projectileSize / 2, p.y - projectileSize / 2, projectileSize, projectileSize);
+            }
+        }
+    }
+
+    // Track mouse position
+    canvas.addEventListener("mousemove", function (event) {
+        const rect = canvas.getBoundingClientRect(); // Get canvas position
+        mouseX = event.clientX - rect.left; // Update mouseX relative to the canvas
+        mouseY = event.clientY - rect.top;  // Update mouseY relative to the canvas
+    });
+    function startgame() {
+        document.getElementById("startbutton").style.display = "none"; // Hide the start button
+        document.getElementById("respectgame").style.display = "block"; // Show the game canvas
+        updateTimer(); // Start the timer
+        update(performance.now()); // Start the game loop
+    }
+    // Update function
+    function update(currentTime) {
+        const deltaTime = currentTime - lastTime;
+        if (deltaTime >= interval) {
+            lastTime = currentTime;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw player
+            ctx.drawImage(playerimg, mouseX - playerSize, mouseY - playerSize, playerSize * 2, playerSize * 2);
+
+            // Update and draw projectiles
+            updateProjectiles();
+            drawProjectiles();
+
+            // Update and draw explosion projectiles
+            updateExplosionProjectiles(currentTime);
+            drawExplosionProjectiles();
+
+            // Spawn new projectiles frequently
+            if (Math.random() < 0.1) {
+                spawnProjectile();
+            }
+
+            // Spawn explosion projectiles every second
+            if (Math.floor(currentTime / 1000) !== Math.floor(lastTime / 1000)) {
+                spawnExplosionProjectile();
+            }
+        }
+        requestAnimationFrame(update);
+    }
+    </script>
+</body>
+</html>

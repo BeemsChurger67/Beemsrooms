@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="chaircat.png">
+    <title>Beemslevel 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+			background-image: url('chaircat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        #gameContainer {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background-color: #fff;
+            border: 2px solid #333;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-content: space-between;
+        }
+
+        .key {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .highlighted {
+            background-color: yellow;
+        }
+
+        .key:hover {
+            background-color: lightblue;
+        }
+
+        #message {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+            z-index: 10;
+        }
+
+        #timer {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">Find the highlighted key!</div>
+    <div id="timer">Time Left: 30</div>
+    <div id="gameContainer">
+        <!-- Keys will be dynamically generated here -->
+    </div>
+    <script src="teleport.js"></script>
+    <script>
+
+        const gameContainer = document.getElementById("gameContainer");
+        const message = document.getElementById("message");
+        const timerDisplay = document.getElementById("timer");
+        const characters = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6'
+        ];
+
+        let highlightedKey;
+        let keyElements = [];
+        let keyPositions = [];
+        let timeLeft = 30;
+        let gameInterval;
+        let timerInterval;
+
+        function generateKeys() {
+            for (let i = 0; i < characters.length; i++) {
+                const keyElement = document.createElement("div");
+                keyElement.classList.add("key");
+                keyElement.textContent = characters[i];
+                gameContainer.appendChild(keyElement);
+                keyElements.push(keyElement);
+
+                keyElement.addEventListener("click", () => checkKey(characters[i]));
+            }
+        }
+
+        function moveKeys() {
+            keyElements.forEach((keyElement, index) => {
+                const x = Math.random() * (gameContainer.offsetWidth - 50);
+                const y = Math.random() * (gameContainer.offsetHeight - 50);
+
+                keyPositions[index] = { x, y };
+
+                keyElement.style.position = 'absolute';
+                keyElement.style.left = `${x}px`;
+                keyElement.style.top = `${y}px`;
+            });
+        }
+
+        function highlightRandomKey() {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            highlightedKey = characters[randomIndex];
+            message.textContent = `Find the key: ${highlightedKey}`;
+        }
+
+        function checkKey(key) {
+            if (key === highlightedKey) {
+                window.location.href = "beemslevel3.html"; // Go to level 3 when correct
+            } else {
+                TeleportToStart();  // If the player clicks the wrong key, teleport them
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time Left: ${timeLeft}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    TeleportToStart();  // If time runs out, teleport them
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            keyPositions = [];
+            keyElements.forEach(keyElement => keyElement.remove());
+            keyElements = [];
+            timeLeft = 30;
+            generateKeys();
+            moveKeys();
+            highlightRandomKey();
+            startTimer();
+        }
+
+        // Initialize game
+        generateKeys();
+        moveKeys();
+        highlightRandomKey();
+        startTimer();
+
+        // Move keys every second
+        setInterval(moveKeys, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 8</title>
+    <link rel="icon" href="busycity.jpg">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('busycity.jpg'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+            height: 100vh; /* Ensures full height */
+            margin: 0; /* Removes default margin */
+            overflow: hidden; /* Prevents scrolling */
+        }
+        canvas {
+            background-image: url('carlanes.png');
+            border: 5px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        #leftButton, #rightButton, #nextLevelButton, #startButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-image: url('stupidcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        #nextLevelButton {
+            display: none;
+        }
+        #timer {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        #gameContainer {
+            display: none;
+        }
+        #secretbutton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+    </style>
+    <button id="secretbutton" onclick="window.location.href='beemslevel8-A.html';">(:</button>
+</head>
+<body onmouseover="playsound()">
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <div>
+        <button id="startButton">Start Game</button>
+        <button id="leftButton" style="display: none;">Move Left</button>
+        <button id="rightButton" style="display: none;">Move Right</button>
+        <button id="nextLevelButton" style="display: none; margin: 0 auto;">Next Level</button>
+    </div>
+    <div id="timer" style="display: none;">Time Left: 30</div>
+    <audio id="Lv8theme" src="Lv8theme.mp3"></audio>
+    <script>
+        function playsound() {
+            const Lv8theme = document.getElementById("Lv8theme");
+            Lv8theme.play();
+        }
+        let lastTime = 0;
+        const fps = 60;
+        const interval = 1000 / fps;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+        const leftButton = document.getElementById('leftButton');
+        const rightButton = document.getElementById('rightButton');
+        const nextLevelButton = document.getElementById('nextLevelButton');
+        const timerDisplay = document.getElementById('timer');
+
+        const lanes = [75, 200, 325];
+        let playerLane = 1; // Start in the middle lane
+        const player = { x: lanes[playerLane], y: 500, width: 50, height: 50 };
+        const cars = [];
+        const carImage = new Image();
+        carImage.src = 'car.png';
+        const playerImage = new Image();
+        playerImage.src = 'dumbassdog.png';
+        let gameRunning = false;
+        let startTime = Date.now();
+
+        function drawPlayer() {
+            ctx.drawImage(playerImage, player.x - player.width / 2, player.y, player.width, player.height);
+        }
+
+        function drawCars() {
+            cars.forEach(car => {
+                ctx.drawImage(carImage, car.x - 40, car.y, 80, 80);
+            });
+        }
+
+        function updateCars() {
+            cars.forEach(car => {
+                car.y += 10;
+            });
+            cars.filter(car => car.y < canvas.height);
+        }
+
+        function spawnCar() {
+            if (!gameRunning) return;
+            const randomLane = Math.floor(Math.random() * 3);
+            cars.push({ x: lanes[randomLane], y: -80 });
+        }
+
+        function checkCollision() {
+            for (const car of cars) {
+                if (
+                    player.x < car.x + 80 &&
+                    player.x + player.width > car.x &&
+                    player.y < car.y + 80 &&
+                    player.y + player.height > car.y
+                ) {
+                    gameRunning = false;
+                    window.location.href = "../beemslevel hub.html";
+                    return;
+                }
+            }
+        }
+
+        function updateGame(currentTime) {
+            const deltaTime = currentTime - lastTime;
+            if (deltaTime >= interval) {
+                lastTime = currentTime;
+                if (!gameRunning) return;
+
+                const elapsedTime = (Date.now() - startTime) / 1000;
+                const timeLeft = Math.max(20 - Math.floor(elapsedTime), 0);
+                timerDisplay.textContent = `Time Left: ${timeLeft}`;
+
+                if (timeLeft === 0) {
+                    gameRunning = false;
+                    nextLevelButton.style.display = 'block';
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawPlayer();
+                drawCars();
+                updateCars();
+                checkCollision();
+            }
+            requestAnimationFrame(updateGame);
+        }
+
+        leftButton.addEventListener('click', () => {
+            if (playerLane > 0) {
+                playerLane--;
+                player.x = lanes[playerLane];
+            }
+        });
+
+        rightButton.addEventListener('click', () => {
+            if (playerLane < 2) {
+                playerLane++;
+                player.x = lanes[playerLane];
+            }
+        });
+
+        nextLevelButton.addEventListener('click', () => {
+            window.location.href = "beemslevel9.html";
+        });
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            leftButton.style.display = 'inline-block';
+            rightButton.style.display = 'inline-block';
+            timerDisplay.style.display = 'block';
+            gameRunning = true;
+            startTime = Date.now();
+            setInterval(spawnCar, 500); // Spawn a car every 0.5 seconds
+            updateGame();
+        });
+    </script>
+</body>
+</html>

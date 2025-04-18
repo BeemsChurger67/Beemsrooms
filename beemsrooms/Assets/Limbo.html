@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="greenwinningsmile.png">
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Limbo</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='teleport.js'></script>
+    <!-- Link to Google Fonts for Rubik Burned -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Burned&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%; /* Make sure the body and html take up the full height of the screen */
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; /* Centers content vertically */
+            background-color: #000000; /* Optional background color */
+            flex-direction: column; /* Stack the text and image vertically */
+            text-align: center; /* Center the text */
+        } dd
+
+        h1 {
+            font-family: 'Rubik Burned', system-ui;
+            color: rgb(0, 255, 0); /* Set text color */
+            font-size: 60px; /* Adjust the size as needed */
+        }
+
+        img {
+            max-width: 100%; /* Makes sure the image is responsive */
+            max-height: 100%; /* Makes sure the image does not exceed the screen size */
+        }
+    </style>
+</head>
+<body onmouseover="playsound()">
+    <h1>limbo</h1>
+    <img src="greenwinningsmile.png" alt="Centered Image">
+    <audio id="lowervegetable" src="LowerVegetable.mp3"></audio>
+    <script>
+        function playsound() {
+            const lowervegetable = document.getElementById("lowervegetable");
+            lowervegetable.play();
+        }
+    </script>
+</body>
+</html>

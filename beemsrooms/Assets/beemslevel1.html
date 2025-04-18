@@ -1,0 +1,76 @@
+<html>
+<head>
+	<title>Beemslevel 1</title>
+	<link rel="icon" href="https://imagedelivery.net/LBWXYQ-XnKSYxbZ-NuYGqQ/6181fe4e-bde2-4fbf-fa97-5a13d646ec00/avatarhd">
+	<style>
+		body {
+			font-family: Arial;
+			background-image: url('https://imagedelivery.net/LBWXYQ-XnKSYxbZ-NuYGqQ/6181fe4e-bde2-4fbf-fa97-5a13d646ec00/avatarhd'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+		}
+		.doors {
+			margin-left: 200px;  /* Moves it 50px to the right */
+			margin-top: 50px;   /* Moves it 30px down */
+			transition: transform 0.1s ease;
+		}
+		.cooltext {
+			font-size: 150px;
+			margin-left: 30px;
+		}
+		.doors:hover {
+			transform: scale(1.3);
+		}
+		.beemslevel2door {
+			display: none; /* Initially hide the door */
+		}
+	</style>
+</head>
+<body>
+	<script src="teleport.js"></script>
+	<a href="beemslevel2.html">
+		<img id="beemslevel2door" class="beemslevel2door" width="175px" src="graydoor.jpg">
+	</a>
+	<p class="cooltext"><span style="color: white;">Bingerland</span></p>
+	<a href="beemslevel1-A.html">
+		<img class="doors" width="175px" src="https://www.munsterjoinery.ie/media/catalog/product/cache/8c946eeaf848c820b01e717f19e4475b/p/r/prestige_4_panel2_ve944lstxztgu1li.jpg">
+	</a>
+	<a href="beemslevel1-B.html">
+		<img class="doors" width="175px" src="https://www.munsterjoinery.ie/media/catalog/product/cache/8c946eeaf848c820b01e717f19e4475b/p/r/prestige_4_panel2_ve944lstxztgu1li.jpg">
+	</a>
+	<a href="beemslevel1-C.html">
+		<img class="doors" width="175px" src="https://www.munsterjoinery.ie/media/catalog/product/cache/8c946eeaf848c820b01e717f19e4475b/p/r/prestige_4_panel2_ve944lstxztgu1li.jpg">
+	</a>
+	<br>
+	<br>
+	<br>
+	<input type="text" id="inputField" placeholder="Write the code here">
+	<button id="submitButton">😺😺😺😺</button>
+	<script>
+		// Select the input field and the button
+		const inputField = document.getElementById("inputField");
+		const submitButton = document.getElementById("submitButton");
+		const level2door = document.getElementById("beemslevel2door");
+
+		// Function to be triggered if the input matches '936865'
+		function checkInput() {
+			const userInput = inputField.value.toLowerCase();  // Convert the input to lowercase
+
+			if (userInput === "936865") {
+				level2door.style.display = "block";  // Set the door to visible
+			} else {
+				if (userInput !== "bingerland") {
+					TeleportToStart()
+				}
+			}
+			if (userInput === "bingerland") {
+				alert("֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍");
+				window.location.href = "beemslevel1-D.html";
+			}
+		}
+		// Add event listener to the button
+		submitButton.addEventListener("click", checkInput);
+	</script>
+</body>
+</html>

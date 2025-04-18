@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 6</title>
+    <link rel="icon" href="truecat.png">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+			background-image: url('truecat.png'); /* Replace with your image path */
+        }
+        #game-container {
+            width: 500px;
+            height: 500px;
+            margin: 50px auto;
+            text-align: center;
+            color: rgb(255, 123, 123);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+			background-image: url('bomb.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        .riddle {
+            margin: 10px 0;
+        }
+        #wires-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .wire {
+            width: 25px;
+            height: 150px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #c1ffc3;
+            color: rgb(255, 146, 146);
+            border: none;
+            border-radius: 5px;
+        }
+        .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #timer {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        #correct-wire {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="timer">Time: 30s</div>
+        <div id="riddles">
+            <div class="riddle" id="riddle-1">
+                <label>What is the capital of france?</label><br>
+                <input id="answer-1">
+                <button class="button" onclick="checkAnswer(1)">Submit</button>
+            </div>
+            <div class="riddle" id="riddle-2" style="display:none;">
+                <label>What nordic country is all the way to the south?</label><br>
+                <input id="answer-2">
+                <button class="button" onclick="checkAnswer(2)">Submit</button>
+            </div>
+            <div class="riddle" id="riddle-3" style="display:none;">
+                <label>What is the biggest country?</label><br>
+                <input id="answer-3">
+                <button class="button" onclick="checkAnswer(3)">Submit</button>
+            </div>
+            <div class="riddle" id="riddle-4" style="display:none;">
+                <label>What brainrot word starts with S and ends with A</label><br>
+                <input id="answer-4">
+                <button class="button" onclick="checkAnswer(4)">Submit</button>
+            </div>
+            <div class="riddle" id="riddle-5" style="display:none;">
+                <label>_ _ _ _ _ _ _ Toilet</label><br>
+                <input id="answer-5">
+                <button class="button" onclick="checkAnswer(5)">Submit</button>
+            </div>
+        </div>
+        
+        <!-- Display wires before the riddles are solved -->
+        <div id="wires-container">
+            <div class="wire" id="red-wire" style="background-color: red;" onclick="wireClicked('red')"></div>
+            <div class="wire" id="blue-wire" style="background-color: blue;" onclick="wireClicked('blue')"></div>
+            <div class="wire" id="green-wire" style="background-color: green;" onclick="wireClicked('green')"></div>
+            <div class="wire" id="yellow-wire" style="background-color: yellow;" onclick="wireClicked('yellow')"></div>
+            <div class="wire" id="orange-wire" style="background-color: orange;" onclick="wireClicked('orange')"></div>
+            <div class="wire" id="purple-wire" style="background-color: purple;" onclick="wireClicked('purple')"></div>
+            <div class="wire" id="brown-wire" style="background-color: rgb(97, 68, 0);" onclick="wireClicked('brown')"></div>
+            <div class="wire" id="pink-wire" style="background-color: pink;" onclick="wireClicked('pink')"></div>
+            <div class="wire" id="black-wire" style="background-color: black;" onclick="wireClicked('black')"></div>
+            <div class="wire" id="white-wire" style="background-color: white;" onclick="wireClicked('white')"></div>
+        </div>
+
+        <div id="result-container" style="display: none;">
+            <div id="correct-wire"></div>
+            <button class="button" onclick="checkWire()">Press the correct wire</button>
+        </div>
+    </div>
+    <script src="teleport.js"></script>
+    <script>
+        let correctWire = null;
+        let timer = 30;
+        let riddlesSolved = 0;
+        const correctAnswers = ['paris', 'denmark', 'russia', 'sigma', 'skibidi']; // Riddle answers
+        const wires = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'brown', 'pink', 'black', 'white'];
+
+        function startTimer() {
+            let timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer').innerText = `Time: ${timer}s`;
+
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    TeleportToStart();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(riddleNumber) {
+            const userAnswer = document.getElementById(`answer-${riddleNumber}`).value;
+            if (userAnswer === correctAnswers[riddleNumber - 1]) {
+                riddlesSolved++;
+                if (riddlesSolved < 5) {
+                    showNextRiddle(riddleNumber);
+                } else {
+                    showCorrectWire();
+                }
+            } else {
+                TeleportToStart();
+            }
+        }
+
+        function showNextRiddle(riddleNumber) {
+            document.getElementById(`riddle-${riddleNumber}`).style.display = 'none';
+            document.getElementById(`riddle-${riddleNumber + 1}`).style.display = 'block';
+        }
+
+        function showCorrectWire() {
+            // Randomly select a wire for the user to press
+            correctWire = wires[Math.floor(Math.random() * wires.length)];
+            document.getElementById('correct-wire').innerText = `The correct wire to press is the ${correctWire} wire.`;
+            document.getElementById('riddles').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+        }
+
+        function wireClicked(wire) {
+            if (wire === correctWire) {
+                alert('too ez');
+                window.location.href = 'beemslevel7.html'; // Redirect to success page or next level
+            } else {
+                TeleportToStart();
+            }
+        }
+
+        function checkWire() {
+            alert(`You pressed the ${correctWire} wire!`);
+            wireClicked(correctWire);
+        }
+
+        // Initialize the game by showing the first riddle and starting the timer
+        document.getElementById('riddle-1').style.display = 'block';
+        startTimer();
+    </script>
+
+</body>
+</html>

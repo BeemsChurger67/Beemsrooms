@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 8-A</title>
+    <link rel="icon" href="forest-background.jpg">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #001a33, #004d00);
+            color: #fff;
+            overflow: hidden;
+        }
+        .forest {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: url('forest-background.jpg') no-repeat center center/cover;
+        }
+        .glow {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(0,255,0,0.8), rgba(0,255,0,0));
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+        .hidden-path {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .hidden-path:hover {
+            background: rgba(0, 255, 0, 0.7);
+        }
+        .message {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .player {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: url('playergriffin.png') no-repeat center center/contain;
+            background-size: cover;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .cube {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ff0000;
+            top: 30%;
+            left: 40%;
+            display: none;
+        }
+        .chest {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: url('chest.png') no-repeat center center/contain;
+            background-size: cover;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>wasd to move (take caps lock off)</h1>
+    <div class="forest">
+        <div class="player" id="player"></div>
+        <div class="glow" style="top: 20%; left: 30%;" onclick="collectGlow(this)"></div>
+        <div class="glow" style="top: 50%; left: 70%;" onclick="collectGlow(this)"></div>
+        <div class="glow" style="top: 80%; left: 40%;" onclick="collectGlow(this)"></div>
+        <div class="cube" id="cube"></div>
+        <div class="chest" id="chest" onclick="goToNextLevel()"></div>
+        <div class="message" id="message">You collected all the orbs!</div>
+    </div>
+
+    <script>
+        let collected = 0;
+        const player = document.getElementById('player');
+        const cube = document.getElementById('cube');
+        const chest = document.getElementById('chest');
+        let playerX = window.innerWidth / 2;
+        let playerY = window.innerHeight / 2;
+        const speed = 10;
+
+        function collectGlow(element) {
+            element.style.display = 'none';
+            collected++;
+            if (collected === 3) {
+                document.getElementById('message').style.display = 'block';
+                cube.style.display = 'block';
+            }
+        }
+
+        function checkCollision(rect1, rect2) {
+            return !(rect1.right < rect2.left || 
+                     rect1.left > rect2.right || 
+                     rect1.bottom < rect2.top || 
+                     rect1.top > rect2.bottom);
+        }
+
+        function revealChest() {
+            chest.style.display = 'block';
+            alert("You found the mystical chest! Click it to proceed to the next level.");
+        }
+
+        function goToNextLevel() {
+            alert("Welcome to the Sublimity series");
+            window.location.href = 'sublimityhub.html';
+        }
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'w':
+                    playerY = Math.max(0, playerY - speed);
+                    break;
+                case 'a':
+                    playerX = Math.max(0, playerX - speed);
+                    break;
+                case 's':
+                    playerY = Math.min(window.innerHeight - 50, playerY + speed);
+                    break;
+                case 'd':
+                    playerX = Math.min(window.innerWidth - 50, playerX + speed);
+                    break;
+            }
+            player.style.top = `${playerY}px`;
+            player.style.left = `${playerX}px`;
+
+            const playerRect = player.getBoundingClientRect();
+            const cubeRect = cube.getBoundingClientRect();
+
+            if (checkCollision(playerRect, cubeRect)) {
+                cube.style.display = 'none';
+                revealChest();
+            }
+        });
+    </script>
+</body>
+</html>

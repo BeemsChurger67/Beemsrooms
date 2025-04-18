@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 9</title>
+    <link rel="icon" href="exe.jpg">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>The code can be found in</h1>
+    <h4>Beemslevel 1-B (first digit of the code)</h4>
+    <h4>Beemslevel 3 (how many questions do you have to answer, 2nd and 3rd digit)</h4>
+    <h4>Beemslevel 7 (4th, 5th digits are how long you have to survive)</h4>
+    <input id="codeInput">
+    <br>
+    <button onclick="checkCode()">Submit</button>
+    <br>
+    <br>
+    <button onclick="window.location.href = 'beemslevel1-B.html';">Beemslevel 1-B</button>
+    <button onclick="window.location.href = 'beemslevel3.html';">Beemslevel 3</button>
+    <button onclick="window.location.href = 'beemslevel7.html';">Beemslevel 7</button>
+
+    <script>
+        function checkCode() {
+            const input = document.getElementById('codeInput').value;
+            if (input === '61030') {
+                alert('good gob');
+                window.location.href = 'beemslevel10.html'; // Redirect to the next level
+            }
+        }
+    </script>
+</body>
+</html>

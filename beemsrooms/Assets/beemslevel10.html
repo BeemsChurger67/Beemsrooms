@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <link rel="icon" href="truecat.png">
+    <title>Beemslevel 10</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='teleport.js'></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            background-image: url('coolgradient.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        
+        .center-container {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center horizontally */
+            text-align: center; /* Align text */
+            display: none; /* Hide game initially */
+        }
+
+        #start-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 20px;
+            padding: 10px 20px;
+        }
+
+        #start-button:hover {
+            background-color: #0056b3;
+        }
+
+        #game {
+            border: 5px solid black;
+            width: 700px;
+            height: 700px;
+			background-image: url('nerdcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        #Healthbar {
+            background-color: #ff0000;
+            width: 700px;
+            height: 100px;
+            border: 5px solid black;
+        }
+        #attackbutton {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular';
+            background-color: #ff9100;
+            font-size: 60px;
+            border-radius: 10px;
+        }
+        #nextlevelbutton {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 60px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="start-container">
+        <h1>Here we go chat</h1>
+        <button id="start-button">Beemslevel 10</button>
+    </div>
+
+    <!-- Game elements (initially hidden) -->
+    <div id="game-container" class="center-container">
+        <h1 id="bosstext">SEÑOR PURRITO BOSS FIGHT</h1>
+        <canvas id="Healthbar"></canvas>
+        <br>
+        <div>
+            <img id="leftknight" src="knightcat.png" alt="Delaware">
+            <img id="boss" src="boss.png" alt="Delaware">
+            <img id="rightknight" src="knightcat.png" alt="Delaware">
+        </div>
+        <br>
+        <canvas id="game" width="700" height="700"></canvas>
+        <button id="nextlevelbutton" onclick="window.location.href='beemslevel11.html'">Congatruation!!!! netx levle!!1111</button>
+        <br>
+        <button id="attackbutton" onclick="DamageBoss()">FIGHT</button>
+    </div>
+    <audio id="bosstheme" src="BossL10.mp3"></audio>
+    <audio id="hithurt" src="hithurt.wav"></audio>
+    <audio id="knightcatspawn" src="knightcatspawn.mp3"></audio>
+    <audio id="shootlaser" src="shootlaser.wav"></audio>
+    <audio id="chargelaser" src="chargelaser.mp3"></audio>
+    <audio id="winsound" src="happywheels.mp3"></audio>
+    <script>
+        let lastTime = 0;
+        const fps = 60;
+        const interval = 1000 / fps; // Time per frame (16.67ms for 60 FPS)
+
+        let BossHP = 700
+        let PlayerHP = 150
+        let BossAttack = 0
+        let TimeUntilBossAttack = 60
+        let TimeUntilAttack = 0
+        let Attack1length = 0
+        let LaserAttackFrame = 0
+        let laser = null;
+        let laserWarningActive = false;
+        let laserActive = false;
+        let winsoundplayed = false;
+        const hithurt = document.getElementById("hithurt")
+        const knightcatspawn = document.getElementById("knightcatspawn")
+        const gamecanvas = document.getElementById("game")
+        const lasershoot = document.getElementById("shootlaser")
+        const chargelaser = document.getElementById("chargelaser")
+        const winsound = document.getElementById("winsound")
+        const ctx = gamecanvas.getContext("2d");
+        const laserX = (gamecanvas.width - 400) / 2;
+        const laserWidth = 400;
+        const laserHeight = 700;
+        const healthbar = document.getElementById("Healthbar")
+        const healthbarctx = healthbar.getContext("2d");
+        let pSize = 50
+        let playerStats = [gamecanvas.width/2 - pSize/2, gamecanvas.height/2 - pSize/2,pSize,pSize,5] // x,y,width,height,speed
+        const playerImage = new Image();
+        playerImage.src = "beemscat.png";
+        const laserImage = new Image();
+        laserImage.src = "laser.png";
+        let keys = {}
+        let divider = 2.33
+        document.addEventListener("keydown", (e) => {
+            keys[e.key] = true; // Mark key as pressed
+        });
+        document.addEventListener("keyup", (e) => {
+            keys[e.key] = false; // Mark key as released
+        });
+
+
+        function update(currentTime) {
+            if (currentTime - lastTime >= interval) {
+                lastTime = currentTime;
+                healthbarctx.clearRect(0, 0, gamecanvas.width, gamecanvas.height);
+                ctx.clearRect(0, 0, gamecanvas.width, gamecanvas.height);
+                if (keys["w"] && playerStats[1] > 0) playerStats[1] -= playerStats[4]; // Move up
+                if (keys["s"] && playerStats[1] + playerStats[3] < gamecanvas.height) playerStats[1] += playerStats[4]; // Move down
+                if (keys["a"] && playerStats[0] > 0) playerStats[0] -= playerStats[4]; // Move left
+                if (keys["d"] && playerStats[0] + playerStats[2] < gamecanvas.width) playerStats[0] += playerStats[4]; // Move right
+                ctx.drawImage(playerImage, playerStats[0], playerStats[1], playerStats[2], playerStats[3]); // (x, y, width, height)
+                healthbarctx.fillStyle = "green"; // Set fill color
+                healthbarctx.fillRect(0, 0, BossHP/divider, 200);
+                healthbarctx.font = "30px Arial";  // Font size and style
+                healthbarctx.fillStyle = "white";   // Text color
+                healthbarctx.fillText(`Health: ${Math.round(BossHP)}/700`, 30, 80);  // (text, x, y)
+                ctx.font = "30px Arial";  // Font size and style
+                ctx.fillStyle = "white";   // Text color
+                ctx.fillText(`Player Health: ${Math.round(PlayerHP)}/150`, 5, 690);  // (text, x, y)
+                moveEnemy();
+                updateProjectiles();
+                if (TimeUntilAttack !== 0) {
+                    TimeUntilAttack -= 1
+                } else {
+                    document.getElementById("attackbutton").style.display = "flex";
+                }
+                if (BossHP < 0) {
+                    document.getElementById("leftknight").style.display = "none";
+                    document.getElementById("boss").style.display = "none";
+                    document.getElementById("rightknight").style.display = "none";
+                    document.getElementById("Healthbar").style.display = "none";
+                    bosstheme.pause();
+                    TimeUntilBossAttack = 99999999999999999
+                    document.getElementById("bosstext").innerText = "you win";
+                    document.getElementById("nextlevelbutton").style.display = "flex";
+                    if (winsoundplayed === false) {
+                        TimeUntilAttack = 9999999999999
+                        winsound.play()
+                        console.log("skibidi")
+                        winsoundplayed = true;
+                    }
+                }
+                if (PlayerHP < 0) {
+                    window.location.href = "../beemslevel hub.html";
+                }
+                TimeUntilBossAttack -= 1
+                if (TimeUntilBossAttack < 0) {
+                    BossAttack = Math.round(Math.random() * 3)
+                    TimeUntilBossAttack = 120
+                    if (BossAttack === 1) {
+                        toggleProjectiles();
+                    }
+                    if (BossAttack === 2) {
+                        bossAttack();
+                        knightcatspawn.play()
+                    }
+                    if (BossAttack === 3) {
+                        chargelaser.play()
+                        laserAttack();
+                        TimeUntilBossAttack = 200
+                    }
+                }
+                if (laserWarningActive) {
+                    const warningImg = new Image();
+                    warningImg.src = "laserwarn.png";
+                    ctx.drawImage(warningImg, laserX, 0, laserWidth, laserHeight);
+                }
+                
+                if (laserActive && laser) {
+                    const laserImg = new Image();
+                    laserImg.src = "laser.png";
+                    ctx.drawImage(laserImg, laser.x, laser.y, laser.width, laser.height);
+                
+                    // Collision check (tick damage)
+                    if (
+                        laser.x < playerStats[0] + playerStats[2] &&
+                        laser.x + laser.width > playerStats[0] &&
+                        laser.y < playerStats[1] + playerStats[3] &&
+                        laser.y + laser.height > playerStats[1]
+                    ) {
+                        PlayerHP -= 1; // Ongoing damage while touching
+                    }
+                }
+            }
+            requestAnimationFrame(update); // Keep updating
+        }
+        let knightcat = new Image();
+        knightcat.src = "knightcat.png"; // Replace with your image path
+
+        let enemy = null;
+
+        function spawnEnemyAttack() {
+            enemy = {
+                x: 300,
+                y: 300,
+                width: 130,
+                height: 130,
+                speed: 3
+            };
+
+            moveEnemy();
+            
+            setTimeout(() => {
+                enemy = null; // Remove enemy after 2 seconds
+            }, 2000);
+        }
+
+        function moveEnemy() {
+            if (!enemy) return;
+
+            let dx = playerStats[0] - enemy.x;
+            let dy = playerStats[1] - enemy.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 1) {
+                enemy.x += (dx / distance) * enemy.speed;
+                enemy.y += (dy / distance) * enemy.speed;
+            }
+
+            // Draw the enemy
+            ctx.drawImage(knightcat, enemy.x, enemy.y, enemy.width, enemy.height);
+            
+            // Check collision
+            if (
+                enemy.x < playerStats[0] + playerStats[2] &&
+                enemy.x + enemy.width > playerStats[0] &&
+                enemy.y < playerStats[1] + playerStats[3] &&
+                enemy.y + enemy.height > playerStats[1]
+            ) {
+                PlayerHP -= Math.random() * 50; // Damage player
+                enemy = null; // Remove enemy on collision
+            }
+        }
+
+        // Call this function when the boss attacks
+        function bossAttack() {
+            spawnEnemyAttack();
+        }
+        function DamageBoss() {
+            BossHP -= Math.random() * 100 + 25
+            document.getElementById("attackbutton").style.display = "none";
+            TimeUntilAttack = Math.round(Math.random() * 250) + 250
+            hithurt.play();
+        }
+
+        // **Start button functionality**
+        document.getElementById("start-button").addEventListener("click", function() {
+            const bosstheme = document.getElementById("bosstheme");
+            bosstheme.play();
+            document.querySelector(".start-container").style.display = "none";
+            document.getElementById("game-container").style.display = "flex"; // Show game elements
+            update(); // Start the game loop
+        });
+        let projectiles = [];
+        let projectileSpeed = 5;
+        let projectileSize = 20;
+        let isSpawning = false;
+        
+        // Function to spawn projectiles
+        function spawnProjectile() {
+            if (!isSpawning) return;
+            let x = Math.random() * (gamecanvas.width - projectileSize);
+            projectiles.push({ x: x, y: 0 });
+            
+            setTimeout(spawnProjectile, 50); // Adjust spawn rate here (1000ms = 1s)
+        }
+        
+        // Function to update projectiles
+        function updateProjectiles() {
+
+        
+            for (let i = 0; i < projectiles.length; i++) {
+                let projectile = projectiles[i];
+                projectile.y += projectileSpeed;
+                projectileSpeed = 8
+        
+                // Draw projectile
+                ctx.fillStyle = "red";
+                ctx.fillRect(projectile.x, projectile.y, projectileSize, projectileSize);
+        
+                // Check collision with player
+                if (
+                    projectile.x < playerStats[0] + playerStats[2] &&
+                    projectile.x + projectileSize > playerStats[0] &&
+                    projectile.y < playerStats[1] + playerStats[3] &&
+                    projectile.y + projectileSize > playerStats[1]
+                ) {
+                    PlayerHP -= Math.random() * 25
+                    projectiles.splice(i, 1); // Remove projectile on hit
+                    i--;
+                }
+        
+                // Remove off-screen projectiles
+                if (projectile.y > gamecanvas.height) {
+                    projectiles.splice(i, 1);
+                    isSpawning = false;
+                    i--;
+                }
+            }
+        
+        }
+        
+        // Toggle function
+        function toggleProjectiles() {
+            isSpawning = !isSpawning;
+            if (isSpawning) {
+                spawnProjectile();
+            }
+        }
+        function laserAttack() {
+            laserWarningActive = true;
+            setTimeout(() => {
+                laserWarningActive = false;
+                laserActive = true;
+                lasershoot.play();
+                // Create the laser object
+                laser = {
+                    x: laserX,
+                    y: 0,
+                    width: laserWidth,
+                    height: laserHeight
+                };
+        
+                // Check for instant collision on start
+                if (
+                    laser.x < playerStats[0] + playerStats[2] &&
+                    laser.x + laser.width > playerStats[0]
+                ) {
+                    PlayerHP -= Math.random() * 50 + 25;
+                }
+        
+                // Remove the laser after 3 seconds
+                setTimeout(() => {
+                    laserActive = false;
+                    laser = null;
+                }, 3000);
+        
+            }, 1000); // 1-second warning
+        }
+    </script>
+</body>
+</html>

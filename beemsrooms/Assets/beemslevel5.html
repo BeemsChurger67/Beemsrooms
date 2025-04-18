@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 5</title>
+    <link rel="icon" href="baldzeee.png">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+			background-image: url('baldzeee.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        .start-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 80px;
+            cursor: pointer;
+            color: white;
+			background-image: url('baldzeee.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="startgameaudio" src="locatenew.mp3"></audio>
+    <audio id="deathaudio" src="evilbubzeeekill.mp3"></audio>
+    <audio id="thankyou" src="thankyou.mp3"></audio>
+    <button class="start-button" onclick="startGame()">Start</button>
+    <div class="info" id="info">Click the wig 20 times. Time left: 30s</div>
+    <canvas id="gameCanvas"></canvas>
+    <script src="teleport.js"></script>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const startaudio = document.getElementById("startgameaudio");
+        const deathaudio = document.getElementById("deathaudio");
+        const thankyou = document.getElementById("thankyou");
+        let gameRunning = false;
+        let wigX, wigY;
+        let wigClicks = 0;
+        let projectiles = [];
+        let timeLeft = 30;
+        const wigImage = new Image();
+        wigImage.src = "bubzeeewig.png";
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        function startGame() {
+            startaudio.play();
+            document.querySelector(".start-button").style.display = "none";
+            gameRunning = true;
+            wigClicks = 0;
+            projectiles = [];
+            timeLeft = 30;
+            spawnWig();
+            setInterval(spawnProjectile, 1000); // New projectile every second
+            timerCountdown();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function spawnWig() {
+            wigX = Math.random() * (canvas.width - 100);
+            wigY = Math.random() * (canvas.height - 100);
+        }
+        
+        function spawnProjectile() {
+            const projectile = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: 10 + Math.random() * 20,
+                speedX: (Math.random() - 0.5) * 4,
+                speedY: (Math.random() - 0.5) * 4
+            };
+            projectiles.push(projectile);
+        }
+        
+        function updateProjectiles() {
+            for (let projectile of projectiles) {
+                projectile.x += projectile.speedX;
+                projectile.y += projectile.speedY;
+                if (projectile.x < 0 || projectile.x > canvas.width) projectile.speedX *= -1;
+                if (projectile.y < 0 || projectile.y > canvas.height) projectile.speedY *= -1;
+            }
+        }
+        
+        function checkCollisions(mouseX, mouseY) {
+            for (let projectile of projectiles) {
+                let dx = mouseX - projectile.x;
+                let dy = mouseY - projectile.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < projectile.radius) {
+                    deathaudio.play();
+                    startaudio.pause();
+                    TeleportToStart();
+                }
+            }
+        }
+        
+        canvas.addEventListener("mousemove", function(event) {
+            if (!gameRunning) return;
+            let rect = canvas.getBoundingClientRect();
+            let mouseX = event.clientX - rect.left;
+            let mouseY = event.clientY - rect.top;
+            checkCollisions(mouseX, mouseY);
+        });
+
+        canvas.addEventListener("click", function(event) {
+            if (!gameRunning) return;
+            let rect = canvas.getBoundingClientRect();
+            let mouseX = event.clientX - rect.left;
+            let mouseY = event.clientY - rect.top;
+            if (
+                mouseX >= wigX && mouseX <= wigX + 100 &&
+                mouseY >= wigY && mouseY <= wigY + 100
+            ) {
+                wigClicks++;
+                document.getElementById("info").innerText = `Clicks: ${wigClicks}/20. Time left: ${timeLeft}s`;
+                if (wigClicks >= 20) {
+                    startaudio.pause();
+                    thankyou.play();
+                    alert("Thank you kind sir!")
+                    window.location.href = "beemslevel6.html";
+                } else {
+                    spawnWig();
+                    thankyou.currentTime = 0;
+                    thankyou.play();
+                }
+            }
+        });
+
+        function timerCountdown() {
+            let timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("info").innerText = `Clicks: ${wigClicks}/20. Time left: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    startaudio.pause();
+                    deathaudio.play();
+                    TeleportToStart();
+                }
+            }, 1000);
+        }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(wigImage, wigX, wigY, 100, 100);
+            updateProjectiles();
+            ctx.fillStyle = "red";
+            for (let projectile of projectiles) {
+                ctx.beginPath();
+                ctx.arc(projectile.x, projectile.y, projectile.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>

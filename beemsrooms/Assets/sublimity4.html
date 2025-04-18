@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sublimity 4</title>
+    <link rel="icon" href="questionmark.png">
+    <style>
+    body {
+        background-image: url("mysteriousblack.jpg"); /* Replace with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        color: white; /* Sets all text to white */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+        /* Basic styling for the maze container */
+        #maze {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            background-color: #eee;
+            border: 2px solid black;
+			top: 100px;
+        }
+
+        /* Styling for maze walls */
+        .wall {
+            position: absolute;
+            background-color: red;
+        }
+
+        /* Example wall layout */
+        #wall1 {
+            top: 0;
+            left: 0x;
+            width: 20px;
+            height: 400px;
+        }
+        #wall2 {
+            top: 0;
+            left: 40px;
+            width: 20px;
+            height: 300px;
+        }
+        #wall3 {
+            top: 280px;
+            left: 40px;
+            width: 300px;
+            height: 20px;
+        }
+        #wall4 {
+            top: 320px;
+            left: 20px;
+            width: 320px;
+            height: 20px;
+        }
+        #wall5 {
+            top: 280px;
+            left: 340px;
+            width: 20px;
+            height: 60px;
+        }
+        #goal {
+            position: absolute;
+            top: 300px;
+            left: 300px;
+            width: 40px;
+            height: 20px;
+            background-color: green;
+        }
+    </style>
+    <script>
+	
+		event.preventDefault();
+        function touchedWall() {
+            alert("its so over gng");
+            // Optionally, reload the page to restart the game
+            window.location.href = "Limbo.html";
+        }
+
+        function reachedGoal() {
+            alert("pro gamer");
+			window.location.href = "beemslevel12.html";
+        }
+    </script>
+</head>
+<body>
+
+    <h1>dont screw it over lol</h1>
+    <p>Move your mouse through the maze without touching the walls!</p>
+
+    <!-- Maze container -->
+    <div id="maze">
+        <!-- Maze walls -->
+        <div id="wall1" class="wall" onmouseover="touchedWall()"></div>
+        <div id="wall2" class="wall" onmouseover="touchedWall()"></div>
+		<div id="wall2" class="wall" onmouseover="touchedWall()"></div>
+		<div id="wall3" class="wall" onmouseover="touchedWall()"></div>
+		<div id="wall4" class="wall" onmouseover="touchedWall()"></div>
+		<div id="wall5" class="wall" onmouseover="touchedWall()"></div>
+
+        <!-- The goal area -->
+        <div id="goal" onmouseover="reachedGoal()">Goal</div>
+    </div>
+
+</body>
+</html>

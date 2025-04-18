@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sublimity 3</title>
+    <link rel="icon" href="questionmark.png">
+    <style>
+    body {
+        background-image: url("mysteriousblack.jpg"); /* Replace with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        color: white; /* Sets all text to white */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    #myButton {
+        display: none;
+    }
+    #secretbutton {
+        display: none;
+		background-image: url("stupidcat.png");
+		background-size: cover;
+		padding-top: 50px;
+        transition: transform 0.3s ease; /* Smooth transition for scaling */
+    }
+    #secretbutton:hover {
+        transform: scale(1.2); /* Makes the button 20% bigger */
+    }
+	#sigmabutton {
+		display: none;
+	}
+    </style>
+</head>
+<body>
+    <h1>Whats my full username/nickname?</h1>
+
+    <!-- Input field that triggers the checkInput function on every input -->
+    <input type="text" id="myInput" placeholder="Type here..." oninput="checkInput()">
+	<button id="myButton" onclick="nextlevel()">level 6</button>
+	<button id="secretbutton" onclick="secretlevel()">Im not telling you</button>
+	<button onclick="Reset()">go to level 0</button>
+	<button onclick="addValue()" id="sigmabutton">dont press this button 25 times</button>
+	<script>
+		
+        // JavaScript function to check the input value
+		var inputpresses = 0;
+        function checkInput() {
+            // If the input value is "cheese", execute this block
+			var inputValue = document.getElementById("myInput").value;
+			if (inputpresses < 24) {
+				if (inputValue.toLowerCase() === "beemschurger67") {
+					document.getElementById("myButton").style.display = "block";
+					document.getElementById("sigmabutton").style.display = "block";
+
+					alert("HES TRUE");
+					
+					// Call other functions or do something else here
+				}
+			}
+        }
+		function nextlevel() {
+			window.location.href = "sublimity4.html";
+		}
+		function secretlevel() {
+			window.location.href = "Limbo.html";
+		}
+		function addValue() {
+			inputpresses += 1;
+			console.log(inputpresses);
+			if (inputpresses > 24) {
+				var inputValue = document.getElementById("myInput").value;
+				if (inputValue.toLowerCase() === "beemschurger67") {
+					document.getElementById("secretbutton").style.display = "block";
+					alert("☻☻☻☻");
+				}
+			}
+		}
+    </script>
+</body>
+</html>

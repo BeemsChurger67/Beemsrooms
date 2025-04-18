@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 4</title>
+    <link rel="icon" href="youngstupidcat.png">
+    <script src="teleport.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+			background-image: url('youngstupidcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        .container {
+            padding: 20px;
+            border-radius: 10px;
+            border: 10px solid black;
+			background-image: url('chaircat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        input {
+            margin-top: 10px;
+            padding: 5px;
+			background-image: url('youngstupidcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px;
+            cursor: pointer;
+			background-image: url('youngstupidcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="question">Loading...</h1>
+        <div id="media"></div>
+        <input type="text" id="answer" placeholder="Enter your answer">
+        <button onclick="checkAnswer()">Submit</button>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                text: "How many attempts did beemschurger67 take to clear FISH FISH GODMODE?", 
+                answer: "1682", 
+                media: "<iframe width='560' height='315' src='https://www.youtube.com/embed/TN5u_0nTB_Q' frameborder='0' allowfullscreen></iframe>"
+            },
+            { text: "What is the capital of the UK?", answer: "london", media: "" },
+            { text: "What flag is this?", answer: "colorado", media: "<img src='colorado_flag.png' alt='Flag' width='300'>" },
+            { text: "What country is this?", answer: "italy", media: "<img src='italygsr.jpg' alt='Country' width='300'>" },
+            { text: "What is the hardest level in Geometry Dash (30/3/2025)?", answer: "tidal wave", media: "" }
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuestion() {
+            document.getElementById("question").innerText = questions[currentQuestion].text;
+            document.getElementById("media").innerHTML = questions[currentQuestion].media;
+            document.getElementById("answer").value = "";
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+            if (userAnswer === questions[currentQuestion].answer) {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    window.location.href = "beemslevel5.html";
+                }
+            } else {
+                TeleportToStart();
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

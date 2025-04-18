@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="stupidcat.png">
+    <title>Beemslevel 1-B</title>
+    <style>
+		body {
+			background-image: url("stupidcatoverload.png"); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+			margin: 0;
+            font-family: Arial;
+            overflow: hidden;
+		}
+
+        canvas {
+            display: block;
+            background-color: #f0f0f0;
+            margin: 0 auto;
+        }
+
+        #timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 160px;
+            color: black;
+            z-index: 10;
+        }
+
+        #message {
+            font-size: 50px;
+			text-align: center;
+			display: none;
+        }
+		button {
+			margin: 0 auto;  /* Centers horizontally */
+			display: block;
+			padding: 10px 20px;          /* Spacing inside the button */
+			background-color: red;   /* red background */
+			color: white;                /* Text color */
+			font-size: 16px;              /* Text size */
+			border: none;                /* Removes the default border */
+			border-radius: 12px;         /* Rounded corners */
+			cursor: pointer;             /* Pointer cursor on hover */
+			transition: background-color 0.3s ease, transform 0.2s; /* Smooth transition */
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+		}
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="800"></canvas>
+    <div id="timer">30</div>
+	<button id="gotolevel1">go back to level 1</button>
+	<div id="message">The 3rd and 4th digits are 68</div>
+	<script src="teleport.js"></script>
+    <script>
+        let lastTime = 0;
+        const fps = 60;
+        const interval = 1000 / fps; // Time per frame (16.67ms for 60 FPS)
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Player variables
+        const player = new Image();
+        player.src = "stupidcat.png";  // Ensure this image is in the same directory
+        const playerWidth = 50;
+        const playerHeight = 50;
+        let playerX = 375;  // Start in the middle of the canvas
+        let playerY = 375;
+
+        // Movement speed
+        const speed = 8;
+
+        // Projectile variables
+        const projectiles = [];
+        const projectileWidth = 20;
+        const projectileHeight = 20;
+        const projectileSpeed = 10;
+
+        // Timer variables
+        let timer = 30;
+        let intervalId;
+
+        // Key press state
+        const keys = {
+            w: false,
+            a: false,
+            s: false,
+            d: false
+        };
+
+        // Game Over flag
+        let gameOver = false;
+
+        // Game loop
+        function gameLoop(currentTime) {
+            if (currentTime - lastTime >= interval) {
+                lastTime = currentTime;
+                if (gameOver) return;  // Stop the game loop if the game is over
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear canvas
+                    movePlayer();  // Move player based on key presses
+                    if (timer > 0) createProjectiles();  // Create new projectiles only if the timer > 0
+                    moveProjectiles();  // Move projectiles
+                    checkCollisions();  // Check if player collides with projectiles
+                    drawProjectiles();  // Draw projectiles
+                    drawPlayer();  // Draw player
+                    updateTimer();  // Update the timer
+            }
+            requestAnimationFrame(gameLoop);  // Repeat the game loop
+        }
+
+        // Move the player based on key presses
+        function movePlayer() {
+            if (keys.w && playerY > 0) playerY -= speed;  // Move up
+            if (keys.a && playerX > 0) playerX -= speed;  // Move left
+            if (keys.s && playerY < canvas.height - playerHeight) playerY += speed;  // Move down
+            if (keys.d && playerX < canvas.width - playerWidth) playerX += speed;  // Move right
+        }
+
+        // Create projectiles (more frequently)
+        function createProjectiles() {
+            if (Math.random() < 0.1) {  // Increased frequency of projectiles
+                const yPos = Math.random() * canvas.height;
+                projectiles.push({ x: canvas.width, y: yPos });
+            }
+        }
+
+        // Move projectiles from right to left
+        function moveProjectiles() {
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                projectiles[i].x -= projectileSpeed;
+                if (projectiles[i].x < 0) {
+                    projectiles.splice(i, 1);  // Remove projectile if it's off the canvas
+                }
+            }
+        }
+		// teleport to level 1
+		const goback = document.getElementById("gotolevel1");
+		goback.addEventListener("click", gobacklv1)
+		function gobacklv1() {
+			window.location.href = "beemslevel1.html";
+		}
+
+        // Draw projectiles
+        function drawProjectiles() {
+            ctx.fillStyle = "red";
+            for (let i = 0; i < projectiles.length; i++) {
+                ctx.fillRect(projectiles[i].x, projectiles[i].y, projectileWidth, projectileHeight);
+            }
+        }
+
+        // Draw the player
+        function drawPlayer() {
+            ctx.drawImage(player, playerX, playerY, playerWidth, playerHeight);
+        }
+
+        // Check for collisions with projectiles
+        function checkCollisions() {
+            for (let i = 0; i < projectiles.length; i++) {
+                const p = projectiles[i];
+                if (playerX < p.x + projectileWidth && playerX + playerWidth > p.x &&
+                    playerY < p.y + projectileHeight && playerY + playerHeight > p.y) {
+                    if (!gameOver) {
+                        TeleportToStart();  // Only teleport once
+                        gameOver = true;  // Set game over flag to prevent further actions
+                    }
+                }
+            }
+        }
+
+        // Reset the game after collision
+        function resetGame() {
+            playerX = 375;  // Reset player to center
+            playerY = 375;
+            projectiles.length = 0;  // Clear projectiles
+            timer = 30;  // Reset timer
+            document.getElementById("timer").textContent = timer;  // Update timer on screen
+            clearInterval(intervalId);  // Clear the interval for countdown
+            startTimer();  // Restart timer countdown
+        }
+
+        // Timer function to count down from 30 seconds
+        function startTimer() {
+            intervalId = setInterval(function() {
+                if (timer > 0) {
+                    timer--;
+                    document.getElementById("timer").textContent = timer;
+                } else {
+                    clearInterval(intervalId);
+                    document.getElementById("message").style.display = "block";  // Show message
+                }
+            }, 1000);
+        }
+
+        // Update the timer display
+        function updateTimer() {
+            // Timer is updated every second in startTimer function
+        }
+
+        // Keydown and keyup listeners for WASD movement
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "w") keys.w = true;
+            if (event.key === "a") keys.a = true;
+            if (event.key === "s") keys.s = true;
+            if (event.key === "d") keys.d = true;
+        });
+
+        document.addEventListener("keyup", function(event) {
+            if (event.key === "w") keys.w = false;
+            if (event.key === "a") keys.a = false;
+            if (event.key === "s") keys.s = false;
+            if (event.key === "d") keys.d = false;
+        });
+
+        // Start the game loop when the player image is loaded
+        player.onload = function() {
+            startTimer();  // Start timer countdown
+            gameLoop();  // Start the game loop
+        };
+
+        // Teleport function
+        function TeleportToStart() {
+            alert("Going back to the first level");
+            window.location.href = "../beemslevel hub.html";  // Go to the level hub
+        }
+    </script>
+</body>
+</html>
