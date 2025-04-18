@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 15</title>
+    <link rel="icon" href="sillyseal.jpg">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: white;
+            overflow: hidden;
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+        }
+
+        form {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+            color: white;
+        }
+
+        p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            transition: transform 0.3s ease;
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+        }
+
+        input {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            outline: none;
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+            color: white;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: #fff;
+            background-color: #ff6f61;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            background-image: url('sillyseal.jpg');
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Centers the image */
+        }
+
+        button:hover {
+            background-color: #ff3b2f;
+        }
+    </style>
+    <script>
+        function checkAnswers() {
+            const answers = ["cat", "dog", "sun", "blue", "apple", "car", "tree", "fish", "book", "star"];
+            let correct = 0;
+
+            answers.forEach((answer, i) => {
+                const userAnswer = document.getElementById(`answer${i + 1}`).value.trim().toLowerCase();
+                if (userAnswer.trim() === answer.trim()) correct++;
+            });
+
+            window.location.href = correct === answers.length ? "beemslevelVictory.html" : "beemslevel11.html";
+        }
+
+        function moveQuestions() {
+            const questions = document.querySelectorAll('p');
+            questions.forEach(question => {
+                const x = Math.random() * (window.innerWidth - 200);
+                const y = Math.random() * (window.innerHeight - 100);
+                question.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setInterval(moveQuestions, 1000);
+        });
+    </script>
+</head>
+<body>
+    <h1>Riddle Challenge</h1>
+    <form onsubmit="event.preventDefault(); checkAnswers();">
+        <p>1. What animal says "meow"?</p>
+        <input type="text" id="answer1" placeholder="Your answer">
+
+        <p>2. What animal says "woof"?</p>
+        <input type="text" id="answer2" placeholder="Your answer">
+
+        <p>3. What is bright and shines in the sky during the day?</p>
+        <input type="text" id="answer3" placeholder="Your answer">
+
+        <p>4. What color is the sky on a clear day?</p>
+        <input type="text" id="answer4" placeholder="Your answer">
+
+        <p>5. What fruit is red and often associated with teachers?</p>
+        <input type="text" id="answer5" placeholder="Your answer">
+
+        <p>6. What do you drive to get to places?</p>
+        <input type="text" id="answer6" placeholder="Your answer">
+
+        <p>7. What has leaves and grows in the forest?</p>
+        <input type="text" id="answer7" placeholder="Your answer">
+
+        <p>8. What swims in water and has fins?</p>
+        <input type="text" id="answer8" placeholder="Your answer">
+
+        <p>9. What do you read to learn or enjoy stories?</p>
+        <input type="text" id="answer9" placeholder="Your answer">
+
+        <p>10. What twinkles in the night sky?</p>
+        <input type="text" id="answer10" placeholder="Your answer">
+
+        <button type="submit">Submit Answers</button>
+    </form>
+</body>
+</html>
