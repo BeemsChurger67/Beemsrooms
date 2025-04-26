@@ -393,17 +393,6 @@ p {
     let timeLeft = 45; // seconds
 
 const timerDisplay = document.getElementById("timer");
-
-const countdown = setInterval(() => {
-    timeLeft--;
-    timerDisplay.textContent = timeLeft;
-
-    if (timeLeft <= 0) {
-        clearInterval(countdown);
-        window.location.href = "beemslevel11.html";
-        // You can trigger something here like end the game or show a win screen
-    }
-}, 1000);
     const canvas = 
     document.getElementById('mazeCanvas');
 const pen = 

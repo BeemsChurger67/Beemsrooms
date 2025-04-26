@@ -52,6 +52,7 @@
 		const inputField = document.getElementById("inputField");
 		const submitButton = document.getElementById("submitButton");
 		const level2door = document.getElementById("beemslevel2door");
+		let fail = true; // Variable to track if the input is correct
 
 		// Function to be triggered if the input matches '936865'
 		function checkInput() {
@@ -60,15 +61,23 @@
 			if (userInput === "936865") {
 				level2door.style.display = "block";  // Set the door to visible
 			} else {
-				if (userInput !== "bingerland") {
-					TeleportToStart()
+				fail = true;
+				if (userInput === "bingerland") {
+					alert("֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍");
+					window.location.href = "beemslevel1-D.html";
+					fail = false;
+				}
+				if (userInput === "bubzeeeland") {
+					alert("THE BUBZEEE OF THE UK HAS INVADED THE KINGDOM OF BINGERLANDIA NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+					window.location.href = "bubzeeetrilogy.html";
+					fail = false;
+				}
+				if (fail === true) {
+					TeleportToStart();
 				}
 			}
-			if (userInput === "bingerland") {
-				alert("֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍֍");
-				window.location.href = "beemslevel1-D.html";
-			}
 		}
+
 		// Add event listener to the button
 		submitButton.addEventListener("click", checkInput);
 	</script>

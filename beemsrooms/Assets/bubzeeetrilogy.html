@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUBZEEE TRILOGY</title>
+    <link rel="icon" href="bubzeee.png"> <!-- Replace with your image path -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik+Bubbles&family=Rubik+Burned&family=Tektur:wght@900&display=swap');
+        body {
+            font-family: "Tektur", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 900;
+            font-style: normal;
+            font-variation-settings:
+              "wdth" 100;
+            background-image: url("bubzeeefat.png"); /* Replace with your image path */
+            background-size: cover; /* Ensures the image covers the entire screen */
+            cursor: url('bubzeeecursor.png'), auto;
+        }
+        #beginlevel {
+            font-family: "Tektur", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 900;
+            font-style: normal;
+            font-variation-settings:
+              "wdth" 100;
+            width: 200px; /* Set button width */
+            height: 400px; /* Set button height */
+            background-image: url("bubzeeedoor.png"); /* Replace with your image path */
+            background-size: cover; /* Ensure the image covers the button */
+            background-position: center; /* Center the image */
+            color: white;
+            font-size: 30px;
+            
+        }
+        #beginlevel:hover {
+            transform: scale(1.1);
+
+        }
+        #gamecontainer {
+            display: none; /* Hide the game container initially */
+            gap: 5px; /* Add spacing between items */
+            flex-direction: column; /* Stack items vertically */
+        }
+        #money {
+            width: 200px;
+            font-size: 20px; /* Adjust font size */
+            display: block; /* Ensure the button is treated as a block element */
+        }
+        #timer {
+            font-size: 75px;
+        }
+        .game-container {
+            background-color: white;
+            border: 2px solid #000000;
+            padding: 10px;
+            width: 700px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+			background-image: url('stupidcat.png'); /* Replace with your image path */
+			background-size: cover; /* Ensures the image covers the entire screen */
+			background-position: center; /* Centers the image */
+			background-repeat: no-repeat; /* Prevents the image from repeating */
+        }
+        #binger {
+            background-image: url('hackerbg.jpg'); /* Replace with your image path */
+            color: white;
+        }
+        #win {
+            display: none;
+        }
+        #bingerincreaser {
+            display: none;
+        }
+        #bingerquest {
+            display: none;
+        }
+        #bingerx2 {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bubzeeetrilogyTheme" src="bubzeeetrilogyTheme.mp3"></audio>
+    <div id="begincontainer">
+        <h1 id="L1text">START THE BUBZEEE INVASION RAHHHHHHHHHHHHH</h1>
+        <button id="beginlevel" onclick="Beginlevel1()">START THE BUBZEEE TRILOGY</button>
+        <br><br>
+        <button id="troll" onclick="window.location.href = 'beemslevelTROLL.html'">Go back button if your scared!!111</button>
+
+    </div>
+    
+    <div id="gamecontainer">
+        <div id="timer">goodluck cuh 🤑</div>
+        <div class="game-container">
+            <h1>GET 1 MILLION BINGERS</h1>
+            <p id="bingerDisplay">BINGERS: 0</p> <!-- Display the variable -->
+            <div id="multiplier">BINGERMULTIPLIER: 1x</div>
+            <button id="binger" onclick="GetBinger()">BingerCollecter.exe</button>
+            <button id="bingerincreaser" onclick="upgrade()">+1.5x multiplier | 20 bingers</button>
+            <button id="bingerquest" onclick="givequest()">random quest | 50 bingers</button>
+            <button id="bingerx2" onclick="expensiveupgrade()">+x2 multiplier | 1500 bingers</button>
+            <br>
+            <button id="win" onclick="window.location.href = 'beemslevel10.html'">ESCAPE THE BUBZEEE TRILOGY</button>
+        </div>
+    </div>
+    <div id="customCursor"></div>
+    <script>
+        let binger = 0; // Initialize the variable
+        let bingerincreaserCost = 20; // Cost of the binger increaser
+        let expensivebingerincreaserCost = 1500; // Cost of the binger increaser
+        let bingermultiplier = 0;
+        let bingerexpensivemultiplier = 0;
+        let bingerQuestmultiplier = 0; // Initialize the multiplier
+        let bingerQuestmultiplierCost = 50; // Cost of the binger quest multiplier
+        function GetBinger() {
+            binger += 1 * (bingermultiplier+1) * (bingerQuestmultiplier+1) * (bingerexpensivemultiplier+1); // Increment the variable
+        }
+        function upgrade() {
+            if (binger >= bingerincreaserCost) {
+                binger -= bingerincreaserCost; // Deduct the cost
+                bingermultiplier += 1.5; // Increase the multiplier
+                bingerincreaserCost *= 2;
+            } else {
+                alert("Not enough BINGERS!"); // Alert if not enough BINGERS
+            }
+        }
+        function expensiveupgrade() {
+            if (binger >= expensivebingerincreaserCost) {
+                binger -= expensivebingerincreaserCost; // Deduct the cost
+                bingerexpensivemultiplier += 2; // Increase the multiplier
+                expensivebingerincreaserCost *= 4;
+            } else {
+                alert("Not enough BINGERS!"); // Alert if not enough BINGERS
+            }
+        }
+        function givequest() {
+            if (binger >= bingerQuestmultiplierCost) {
+                binger -= bingerQuestmultiplierCost; // Deduct the cost
+                bingerQuestmultiplierCost *= 2; // Increase the cost
+        
+                // Generate a random math equation
+                const num1 = Math.floor(Math.random() * 30) + 1; // Random number between 1 and 10
+                const num2 = Math.floor(Math.random() * 30) + 1; // Random number between 1 and 10
+                const correctAnswer = num1 + num2; // Example: Addition equation
+        
+                // Display the math question and input field
+                const questContainer = document.createElement("div");
+                questContainer.id = "questContainer";
+        
+                const question = document.createElement("p");
+                question.textContent = `Solve: ${num1} + ${num2}`;
+                questContainer.appendChild(question);
+        
+                const input = document.createElement("input");
+                input.id = "questInput";
+                questContainer.appendChild(input);
+        
+                const submitButton = document.createElement("button");
+                submitButton.textContent = "Submit";
+                submitButton.onclick = function () {
+                    const userAnswer = parseInt(document.getElementById("questInput").value);
+                    if (userAnswer === correctAnswer) {
+                        bingerQuestmultiplier += 2;
+                        document.getElementById("questContainer").remove(); // Remove the quest UI
+                    } else {
+                        alert("Wrong answer! Try again next time.");
+                        document.getElementById("questContainer").remove(); // Remove the quest UI
+                    }
+                };
+                questContainer.appendChild(submitButton);
+        
+                // Append the questContainer to the game-container div
+                document.querySelector(".game-container").appendChild(questContainer);
+            } else {
+                alert("Not enough BINGERS!"); // Alert if not enough BINGERS
+            }
+        }
+        const timerDisplay = document.getElementById("timer");
+        let timeLeft = 121; // seconds
+        document.querySelectorAll("*").forEach(element => {
+            element.style.cursor = "url('bubzeeecursor.png'), auto";
+        });
+        function Update() {
+            document.getElementById("bingerDisplay").textContent = "BINGERS: " + binger; // Update the display
+            document.getElementById("bingerincreaser").textContent = "+1.5x multiplier | "+bingerincreaserCost+" bingers"; // Update the cost
+            document.getElementById("multiplier").textContent = "BINGERMULTIPLIER: "+1 * (bingermultiplier+1) * (bingerQuestmultiplier+1) * (bingerexpensivemultiplier+1)+"x"; // Update the cost
+            document.getElementById("bingerquest").textContent = "Easy Math Quest | "+bingerQuestmultiplierCost+" bingers"; // Update the cost
+            document.getElementById("bingerx2").textContent = "+x2 multiplier | "+expensivebingerincreaserCost+" bingers"; // Update the cost
+            if (binger >= 1000000) {
+                document.getElementById("win").style.display = "block";
+            }
+            if (binger >= 20) {
+                document.getElementById("bingerincreaser").style.display = "block";
+            }
+            if (binger >= 50) {
+                document.getElementById("bingerquest").style.display = "block";
+            }
+            if (binger >= 1500) {
+                document.getElementById("bingerx2").style.display = "block";
+            }
+        }
+        function Beginlevel1() {
+            
+            const bubzeeetheme = document.getElementById("bubzeeetrilogyTheme");
+            bubzeeetrilogyTheme.play();
+            document.getElementById("begincontainer").style.display = "none";
+            document.getElementById("gamecontainer").style.display = "flex";
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = "TIME LEFT: "+timeLeft;
+            
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    window.location.href = "beemslevel11.html";
+                    // You can trigger something here like end the game or show a win screen
+                }
+            }, 1000);
+        }
+        setInterval(Update, 100);
+    </script>
+</body>
+</html>
