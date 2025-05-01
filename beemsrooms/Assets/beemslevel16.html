@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shadow Switch</title>
+  <style>
+    canvas {
+      background: #222;
+      display: block;
+      margin: 0 auto;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const keys = {};
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
+
+const gravity = 0.5;
+const groundY = 550;
+let activeWorld = "light"; // 'light' or 'shadow'
+
+class Player {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.width = 40;
+    this.height = 40;
+    this.color = color;
+    this.vx = 0;
+    this.vy = 0;
+    this.onGround = false;
+  }
+
+  update() {
+    // Movement
+    if (keys["a"] || keys["ArrowLeft"]) this.vx = -5;
+    else if (keys["d"] || keys["ArrowRight"]) this.vx = 5;
+    else this.vx = 0;
+
+    if ((keys["w"] || keys["ArrowUp"]) && this.onGround) {
+      this.vy = -12;
+      this.onGround = false;
+    }
+
+    this.vy += gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Floor collision
+    if (this.y + this.height >= groundY) {
+      this.y = groundY - this.height;
+      this.vy = 0;
+      this.onGround = true;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+}
+
+class Platform {
+  constructor(x, y, width, height, world) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.world = world; // 'light' or 'shadow'
+  }
+
+  draw() {
+    if (this.world === activeWorld) {
+      ctx.fillStyle = this.world === 'light' ? '#ffff66' : '#6666ff';
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
+
+  checkCollision(player) {
+    if (this.world !== activeWorld) return;
+
+    if (player.x < this.x + this.width &&
+        player.x + player.width > this.x &&
+        player.y < this.y + this.height &&
+        player.y + player.height > this.y) {
+
+      // Simple bottom collision
+      if (player.vy > 0 && player.y + player.height - player.vy <= this.y) {
+        player.y = this.y - player.height;
+        player.vy = 0;
+        player.onGround = true;
+      }
+    }
+  }
+}
+
+const lightPlayer = new Player(100, 100, "#ffff66");
+const shadowPlayer = new Player(100, 100, "#6666ff");
+
+const platforms = [];
+
+for (let i = 0; i < 20; i++) {
+  const x = Math.random() * 700 + 50;
+  const y = Math.random() * 400 + 100;
+  const width = Math.random() * 100 + 50;
+  const height = 20;
+  const world = i % 2 === 0 ? 'light' : 'shadow';
+  platforms.push(new Platform(x, y, width, height, world));
+}
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Switch world
+  if (keys[" "]) {
+    activeWorld = activeWorld === "light" ? "shadow" : "light";
+    keys[" "] = false; // prevent constant flipping
+  }
+
+  const currentPlayer = activeWorld === "light" ? lightPlayer : shadowPlayer;
+  currentPlayer.update();
+
+  for (let plat of platforms) {
+    plat.checkCollision(currentPlayer);
+    plat.draw();
+  }
+
+  lightPlayer.draw();
+  shadowPlayer.draw();
+
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+</body>
+</html>

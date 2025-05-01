@@ -8,6 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rubik+Bubbles&family=Rubik+Burned&family=Tektur:wght@900&display=swap');
         body {
+            overflow: hidden; /* Disable scrolling */
             font-family: "Tektur", sans-serif;
             font-optical-sizing: auto;
             font-weight: 900;
@@ -94,8 +95,10 @@
     <div id="gamecontainer">
         <div id="timer">goodluck cuh 🤑</div>
         <div class="game-container">
-            <h1>GET 1 MILLION BINGERS</h1>
-            <p id="bingerDisplay">BINGERS: 0</p> <!-- Display the variable -->
+            <h1>GET 1 MILLION <img src="lowqualitybinger.png" width="25"></h1>
+            <p id="bingerDisplay">
+                <img src="lowqualitybinger.png" width="20" style="vertical-align: middle;"> BINGERS: 0
+            </p>
             <div id="multiplier">BINGERMULTIPLIER: 1x</div>
             <button id="binger" onclick="GetBinger()">BingerCollecter.exe</button>
             <button id="bingerincreaser" onclick="upgrade()">+1.5x multiplier | 20 bingers</button>
@@ -115,7 +118,36 @@
         let bingerQuestmultiplier = 0; // Initialize the multiplier
         let bingerQuestmultiplierCost = 50; // Cost of the binger quest multiplier
         function GetBinger() {
-            binger += 1 * (bingermultiplier+1) * (bingerQuestmultiplier+1) * (bingerexpensivemultiplier+1); // Increment the variable
+            binger += 1 * (bingermultiplier + 1) * (bingerQuestmultiplier + 1) * (bingerexpensivemultiplier + 1); // Increment the variable
+
+            // Create a new image element for the falling animation
+            const bingerImage = document.createElement("img");
+            bingerImage.src = "lowqualitybinger.png"; // Path to the image
+            bingerImage.style.position = "absolute";
+            bingerImage.style.left = Math.random() * window.innerWidth + "px"; // Random horizontal position
+            bingerImage.style.top = "0px"; // Start at the top of the screen
+            bingerImage.style.width = "30px"; // Set the size of the image
+            bingerImage.style.zIndex = "1000"; // Ensure it appears above other elements
+
+            // Append the image to the body
+            document.body.appendChild(bingerImage);
+
+            // Animate the image falling
+            let position = 0; // Initial position
+            let speed = 2; // Initial speed
+            const gravity = 0.1; // Acceleration due to gravity
+
+            const fallInterval = setInterval(() => {
+                position += speed; // Update position
+                speed += gravity; // Accelerate the speed
+                bingerImage.style.top = position + "px"; // Update the image's position
+
+                // Remove the image once it leaves the screen
+                if (position > window.innerHeight) {
+                    clearInterval(fallInterval); // Stop the animation
+                    bingerImage.remove(); // Remove the image from the DOM
+                }
+            }, 16); // Run the animation at ~60 FPS
         }
         function upgrade() {
             if (binger >= bingerincreaserCost) {
@@ -183,11 +215,13 @@
             element.style.cursor = "url('bubzeeecursor.png'), auto";
         });
         function Update() {
-            document.getElementById("bingerDisplay").textContent = "BINGERS: " + binger; // Update the display
-            document.getElementById("bingerincreaser").textContent = "+1.5x multiplier | "+bingerincreaserCost+" bingers"; // Update the cost
-            document.getElementById("multiplier").textContent = "BINGERMULTIPLIER: "+1 * (bingermultiplier+1) * (bingerQuestmultiplier+1) * (bingerexpensivemultiplier+1)+"x"; // Update the cost
-            document.getElementById("bingerquest").textContent = "Easy Math Quest | "+bingerQuestmultiplierCost+" bingers"; // Update the cost
-            document.getElementById("bingerx2").textContent = "+x2 multiplier | "+expensivebingerincreaserCost+" bingers"; // Update the cost
+            document.getElementById("bingerDisplay").innerHTML = 
+                `<img src="lowqualitybinger.png" width="20" style="vertical-align: middle;">: ${binger}`;
+            document.getElementById("bingerincreaser").textContent = "+1.5x multiplier | " + bingerincreaserCost + " bingers";
+            document.getElementById("multiplier").textContent = "BINGERMULTIPLIER: " + 1 * (bingermultiplier + 1) * (bingerQuestmultiplier + 1) * (bingerexpensivemultiplier + 1) + "x";
+            document.getElementById("bingerquest").textContent = "Easy Math Quest | " + bingerQuestmultiplierCost + " bingers";
+            document.getElementById("bingerx2").textContent = "+x2 multiplier | " + expensivebingerincreaserCost + " bingers";
+        
             if (binger >= 1000000) {
                 document.getElementById("win").style.display = "block";
             }
@@ -213,7 +247,7 @@
             
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    window.location.href = "beemslevel11.html";
+                    window.location.href = "Limbo.html";
                     // You can trigger something here like end the game or show a win screen
                 }
             }, 1000);
