@@ -203,17 +203,19 @@
 
         // Keydown and keyup listeners for WASD movement
         document.addEventListener("keydown", function(event) {
-            if (event.key === "w") keys.w = true;
-            if (event.key === "a") keys.a = true;
-            if (event.key === "s") keys.s = true;
-            if (event.key === "d") keys.d = true;
+            const key = event.key.toLowerCase(); // Normalize to lowercase
+            if (key === "w") keys.w = true;
+            if (key === "a") keys.a = true;
+            if (key === "s") keys.s = true;
+            if (key === "d") keys.d = true;
         });
-
+        
         document.addEventListener("keyup", function(event) {
-            if (event.key === "w") keys.w = false;
-            if (event.key === "a") keys.a = false;
-            if (event.key === "s") keys.s = false;
-            if (event.key === "d") keys.d = false;
+            const key = event.key.toLowerCase(); // Normalize to lowercase
+            if (key === "w") keys.w = false;
+            if (key === "a") keys.a = false;
+            if (key === "s") keys.s = false;
+            if (key === "d") keys.d = false;
         });
 
         // Start the game loop when the player image is loaded

@@ -3,12 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shadow Switch</title>
+  <title>Beemslevel 16</title>
+  <link rel="icon" href="stonebrick.png">
   <style>
+    html {
+      background-image: url('stonebrick.png');
+      color: white;
+      font-family: "comic sans ms", cursive, sans-serif;
+    }
     canvas {
-      background: #222;
+      background-size: cover; /* Ensures the image covers the entire screen */
+      background-position: center; /* Centers the image */
+      background-repeat: no-repeat; /* Prevents the image from repeating */
+      background-image: url('catexplode.png'); /* Replace with your image path */
       display: block;
       margin: 0 auto;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 1); /* Add shadow */
+      border-radius: 10px; /* Optional: Add rounded corners */
     }
     body {
       margin: 0;
@@ -17,33 +28,39 @@
   </style>
 </head>
 <body>
+  <button id="refreshButton" onclick="refresh()">Refresh</button>
+  <div>press spacebar for something cool idk</div>
+  <div>W,A,D to move</div>
+  <div>go to the top left of the screen to win</div>
+  <div></div>tip: switching characters makes the other character stay in the end</div>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const keys = {};
-window.addEventListener("keydown", e => keys[e.key] = true);
-window.addEventListener("keyup", e => keys[e.key] = false);
+window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
 
 const gravity = 0.5;
-const groundY = 550;
+const groundY = 600;
 let activeWorld = "light"; // 'light' or 'shadow'
 
 class Player {
-  constructor(x, y, color) {
+  constructor(x, y, imageSrc) {
     this.x = x;
     this.y = y;
     this.width = 40;
     this.height = 40;
-    this.color = color;
+    this.image = new Image();
+    this.image.src = imageSrc; // Path to the player's image
     this.vx = 0;
     this.vy = 0;
     this.onGround = false;
   }
 
   update() {
-    // Movement
+    // Movement logic (same as before)
     if (keys["a"] || keys["ArrowLeft"]) this.vx = -5;
     else if (keys["d"] || keys["ArrowRight"]) this.vx = 5;
     else this.vx = 0;
@@ -66,11 +83,14 @@ class Player {
   }
 
   draw() {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    // Draw the image instead of a rectangle
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
 }
+function refresh() {
+  location.reload(); // Refresh the page
 
+}
 class Platform {
   constructor(x, y, width, height, world) {
     this.x = x;
@@ -82,11 +102,24 @@ class Platform {
 
   draw() {
     if (this.world === activeWorld) {
-      ctx.fillStyle = this.world === 'light' ? '#ffff66' : '#6666ff';
-      ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-  }
+        // Set shadow properties
+        ctx.shadowColor = this.world === "light" ? "rgba(255, 255, 102, 0.5)" : "rgba(102, 102, 255, 0.5)";
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
 
+        // Draw the platform
+        ctx.fillStyle = this.world === "light" ? "#ffff66" : "#6666ff";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        // Reset shadow properties
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+    }
+}
+  
   checkCollision(player) {
     if (this.world !== activeWorld) return;
 
@@ -105,14 +138,14 @@ class Platform {
   }
 }
 
-const lightPlayer = new Player(100, 100, "#ffff66");
-const shadowPlayer = new Player(100, 100, "#6666ff");
+const player1 = new Player(0, 600, "beemscat.png"); // Replace with your image path
+const player2 = new Player(0, 600, "stupidcat.png"); // Replace with your image path
 
 const platforms = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 35; i++) {
   const x = Math.random() * 700 + 50;
-  const y = Math.random() * 400 + 100;
+  const y = Math.random() * 500 + 50;
   const width = Math.random() * 100 + 50;
   const height = 20;
   const world = i % 2 === 0 ? 'light' : 'shadow';
@@ -125,10 +158,10 @@ function gameLoop() {
   // Switch world
   if (keys[" "]) {
     activeWorld = activeWorld === "light" ? "shadow" : "light";
-    keys[" "] = false; // prevent constant flipping
+    keys[" "] = false; // Prevent constant flipping
   }
 
-  const currentPlayer = activeWorld === "light" ? lightPlayer : shadowPlayer;
+  const currentPlayer = activeWorld === "light" ? player1 : player2;
   currentPlayer.update();
 
   for (let plat of platforms) {
@@ -136,8 +169,16 @@ function gameLoop() {
     plat.draw();
   }
 
-  lightPlayer.draw();
-  shadowPlayer.draw();
+  // Draw only the active player
+  currentPlayer.draw();
+
+  // Check if both players are in the top-left corner
+  if (player1.x < 0 && player1.y < 0 && player2.x < 0 && player2.y < 0) {
+    alert("Start spamming the up arrow key");
+    player1.y = 200;
+    player2.y = 200;
+    window.location.href = "beemslevel17.html"; // Teleport to the next level
+  }
 
   requestAnimationFrame(gameLoop);
 }
