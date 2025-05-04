@@ -25,14 +25,28 @@
     
     
   }
+  #game-container {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center elements horizontally */
+    justify-content: center;
+  }
+
+  h1, #score {
+    margin: 10px 0; /* Add some spacing between the text and the canvas */
+  }
+
   canvas {
     border: 1px solid white;
   }
   </style>
 </head>
 <body>
-<div id="score">Score: 0</div>
-<canvas width="400" height="400" id="game"></canvas>
+  <div id="game-container">
+    <h1>arrow keys to move</h1>
+    <div id="score">Score: 0</div>
+    <canvas width="400" height="400" id="game"></canvas>
+  </div>
 <script>
 var canvas = document.getElementById('game');
 var context = canvas.getContext('2d');

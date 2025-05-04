@@ -73,6 +73,7 @@
         <audio id="jumpscare" src="Lv18Death.mp3"></audio>
         <audio id="theme" src="Lv18Theme.mp3"></audio>
         <audio id="win" src="Lv18Win.mp3"></audio>
+        <audio id="collect" src="Lv18Collect.mp3"></audio>
         <script>
             function startgame() {
                 const theme = document.getElementById("theme");
@@ -279,7 +280,12 @@
                             WigAmount++;
                             document.getElementById("CollectedWigs").innerHTML = WigAmount+"/8";
                             update();
+                            const collect = document.getElementById("collect");
+                            collect.pause();
+                            collect.currentTime = 0; // Reset to the beginning
+                            collect.play();
                             if (WigAmount >= 8) {
+                                collect.pause();
                                 jumpscare = true;
                                 const win = document.getElementById("win");
                                 stopTimer(); // Stop the timer

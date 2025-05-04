@@ -1,177 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beemslevel 17</title>
-    <link rel="icon" href="geometrydashship.jpg"> <!-- Replace with your image path -->
-    <style>
-        
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-image: url('blackgradientcircle.jpg'); /* Replace with your image path */
-            background-size: cover;
-        }
-        canvas {
-            background: black;
-            background-image: url('coolbackground.jpg'); /* Replace with your image path */
-            background-size: cover;
-        }
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 2rem;
-            display: none;
-        }
-        #startbutton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 2rem;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-        }
-        #game {
-            display: none;
-        }
-        
-    </style>
+  <meta charset="UTF-8">
+  <title>Beemslevel 17</title>
+  <link rel="icon" href="snowdog.png"> <!-- Replace with your image path -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+      color: white;
+      background-image: url('aidog.jpg'); /* Replace with your image path */
+      background-size: cover; /* Ensures the image covers the entire screen */
+      background-repeat: no-repeat; /* Prevents tiling */
+    }
+    #numberDisplay {
+      font-size: 80px;
+      margin: 30px;
+    }
+    #inputArea {
+      display: none;
+    }
+    #status {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    #decoration {
+        margin-top: 50px;
+        background-color: white;
+        border: 5px solid #000000;
+        padding: 20px;
+        display: inline-block;
+        border-radius: 10px;
+        box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+        background-image: url('snowdog.png'); /* Replace with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents tiling */
+    }
+  </style>
 </head>
 <body>
-    <button id="startbutton" onclick="startgame()">Hold up arrow to go up, release to go down | it begins immediatly when you press this button so start spamming up arrow</button>
-    <div id="game">
-        <canvas id="gameCanvas"></canvas>
-        <div id="gameOver">Game Over! Refresh to try again.</div>
-    </div>
-    <script>
-    function startgame() {
-        document.getElementById('startbutton').style.display = 'none'; // Hide the start button
-        document.getElementById('game').style.display = 'block'; // Show the game canvas and game over message
-        let lastTime = 0;
-        const fps = 120;
-        const interval = 1000 / fps;
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const player = { x: 50, y: canvas.height / 2, size: 20, speed: 0, gravity: 0.4, lift: -0.7 };
-        const obstacles = [];
-        const obstacleWidth = 20;
-        const gapHeight = 150;
-        let gameOver = false;
-        let isHoldingUp = false;
-    
-        let timer = 15;
-        let timerInterval;
-    
-        function createObstacle() {
-            const gapY = Math.random() * (canvas.height - gapHeight);
-            obstacles.push({ x: canvas.width, gapY });
-        }
-    
-        function updateObstacles() {
-            for (let i = obstacles.length - 1; i >= 0; i--) {
-                obstacles[i].x -= 10;
-                if (obstacles[i].x + obstacleWidth < 0) {
-                    obstacles.splice(i, 1);
-                }
-            }
-        }
-    
-        function drawObstacles() {
-            ctx.fillStyle = 'red';
-            for (const obs of obstacles) {
-                ctx.fillRect(obs.x, 0, obstacleWidth, obs.gapY);
-                ctx.fillRect(obs.x, obs.gapY + gapHeight, obstacleWidth, canvas.height - obs.gapY - gapHeight);
-            }
-        }
-    
-        function checkCollision() {
-            for (const obs of obstacles) {
-                if (
-                    player.x < obs.x + obstacleWidth &&
-                    player.x + player.size > obs.x &&
-                    (player.y < obs.gapY || player.y + player.size > obs.gapY + gapHeight)
-                ) {
-                    return true;
-                }
-            }
-            return player.y < 0 || player.y + player.size > canvas.height;
-        }
-    
-        function drawPlayer() {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(player.x, player.y, player.size, player.size);
-        }
-    
-        // Draw the timer at the top center
-        function drawTimer() {
-            ctx.fillStyle = 'white';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Time Left: ${timer}`, canvas.width / 2, 30);
-        }
-    
-        // Start the timer countdown
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                if (timer > 0) {
-                    timer--;
-                } else {
-                    clearInterval(timerInterval);
-                    window.location.href = "beemslevel18.html"; // Teleport to level 18
-                }
-            }, 1000);
-        }
-    
-        function gameLoop(currentTime) {
-            if (currentTime - lastTime >= interval) {
-                lastTime = currentTime;
-                if (gameOver) return;
-    
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-                // Apply gravity and update player position
-                if (isHoldingUp) {
-                    player.speed += player.lift; // Accelerate upwards while holding the key
-                } else {
-                    player.speed += player.gravity; // Apply gravity when not holding the key
-                }
-                player.y += player.speed;
-    
-                updateObstacles();
-                drawObstacles();
-                drawPlayer();
-                drawTimer(); // Draw the timer
-    
-                if (checkCollision()) {
-                    window.location.href = "beemslevel11.html"; // Teleport to level hub
-                }
-            }
-            requestAnimationFrame(gameLoop);
-        }
-    
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') {
-                isHoldingUp = true; // Start accelerating upwards
-            }
-        });
-    
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowUp') {
-                isHoldingUp = false; // Stop accelerating upwards
-            }
-        });
-    
-        setInterval(createObstacle, 1500);
-        startTimer(); // Start the timer
-        gameLoop();
+<div id="decoration">
+  <h1>lock in bro (memomry)</h1>
+  <div id="numberDisplay">Ready?</div>
+  <button id="start" onclick="startGame()">lock in</button>
+  <div id="inputArea">
+    <input type="text" id="userInput" placeholder="Enter numbers (e.g. 38410)" />
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+  <div id="status"></div>
+</div>
+
+  <script>
+    const roundLengths = [2, 3, 5];
+    let currentRound = 0;
+    let sequence = [];
+
+    function startGame() {
+      currentRound = 0;
+      startRound();
+      document.getElementById("start").style.display = "none";
     }
-    </script>
+
+    function startRound() {
+      sequence = [];
+      document.getElementById("userInput").value = "";
+      document.getElementById("inputArea").style.display = "none";
+      document.getElementById("status").innerText = "";
+      showNumbers(roundLengths[currentRound]);
+    }
+
+    function showNumbers(length) {
+      let index = 0;
+      sequence = Array.from({ length }, () => Math.floor(Math.random() * 10));
+      const display = document.getElementById("numberDisplay");
+
+      const interval = setInterval(() => {
+        if (index < sequence.length) {
+          display.innerText = sequence[index];
+          index++;
+        } else {
+          clearInterval(interval);
+          display.innerText = "Go!";
+          document.getElementById("inputArea").style.display = "block";
+        }
+      }, 1000);
+    }
+
+    function checkAnswer() {
+      const userInput = document.getElementById("userInput").value.trim();
+      if (userInput === sequence.join("")) {
+        currentRound++;
+        if (currentRound >= roundLengths.length) {
+          document.getElementById("status").innerText = "🎉 You won!";
+          document.getElementById("numberDisplay").innerText = "Victory!";
+          window.location.href = "beemslevel18.html";
+          return;
+        } else {
+          document.getElementById("status").innerText = `✅ Correct! Next round...`;
+          setTimeout(startRound, 1500);
+        }
+      } else {
+        window.location.href = "beemslevel11.html";
+        setTimeout(startGame, 2000);
+      }
+    }
+
+    // Start game on load
+  </script>
 </body>
 </html>

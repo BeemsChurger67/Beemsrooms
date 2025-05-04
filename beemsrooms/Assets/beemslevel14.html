@@ -3,48 +3,58 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="truecat.png">
+<title>Beemslevel 14</title>
 <style>
-body {
-    font-family: "Consolas", sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    overflow: hidden; /* Prevents scrolling */
-    background-image: url('sillyblackcat.jpg'); /* Replace with your image path */
-    background-size: cover; /* Ensures the image covers the entire screen */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    color: white;
-}
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
-    background-image: url('sillyblackcat.jpg'); /* Replace with your image path */
-    background-size: cover; /* Ensures the image covers the entire screen */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    border : 5px solid black;
-}
-button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 12px;
-}
+    body {
+        font-family: "Consolas", sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center elements horizontally */
+        justify-content: center; /* Center elements vertically */
+        height: 100vh;
+        background-color: #f0f0f0;
+        overflow: hidden; /* Prevents scrolling */
+        background-image: url('sillyblackcat.jpg'); /* Replace with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        color: white;
+    }
+    
+    canvas {
+        border: 1px solid #d3d3d3;
+        background-color: #f1f1f1;
+        background-image: url('sillyblackcat.jpg'); /* Replace with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        border: 5px solid black;
+        margin: 10px 0; /* Add spacing between the canvas and other elements */
+    }
+    
+    button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 0; /* Add spacing between buttons */
+        cursor: pointer;
+        border-radius: 12px;
+    }
+    #beemslevel15, #secret {
+        display: none; /* Initially hidden */
+    }
 </style>
 </head>
 <body>
+    <h1>get 500 score to win</h1>
+    <h1>You can also use up arrow to accelerate</h1>
 <script>
 
 var myGamePiece;
@@ -157,8 +167,11 @@ function updateGameArea() {
         gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
         myObstacles.push(new component(10, height, "green", x, 0));
         myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+        if (myGameArea.frameNo > 500) {
+            document.getElementById("beemslevel15").style.display = "block"; // Show the button
+        }
         if (myGameArea.frameNo > 1000) {
-            window.location.href = "beemslevel15.html"; // teleport to level 15
+            document.getElementById("secret").style.display = "block"; // Show the button
         }
     }
     for (i = 0; i < myObstacles.length; i += 1) {
@@ -179,11 +192,24 @@ function everyinterval(n) {
 function accelerate(n) {
     myGamePiece.gravity = n;
 }
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowUp') { // Check if the up arrow key is pressed
+        accelerate(-0.4); // Accelerate upward
+    }
+});
+
+document.addEventListener('keyup', function(e) {
+    if (e.key === 'ArrowUp') { // Check if the up arrow key is released
+        accelerate(0.3); // Reset acceleration
+    }
+});
 </script>
 <br>
 <button id="startbutton" onclick="startGame()">START GAME</button>
 <br>
 <button onmousedown="accelerate(-0.4)" onmouseup="accelerate(0.3)">ACCELERATE</button>
 <p>Use the ACCELERATE button to stay in the air Get 1000 score</p>
+<button id="beemslevel15" onclick="window.location.href='beemslevel15.html';">next levlelee</button>
+<button id="secret" onclick="window.location.href='beemslevel14-A.html';">what</button>
 </body>
 </html>

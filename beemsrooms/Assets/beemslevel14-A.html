@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beemslevel 14-A</title>
+    <link rel="icon" href="geometrydashship.jpg"> <!-- Replace with your image path -->
+    <style>
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-image: url('blackgradientcircle.jpg'); /* Replace with your image path */
+            background-size: cover;
+        }
+        canvas {
+            background: black;
+            background-image: url('coolbackground.jpg'); /* Replace with your image path */
+            background-size: cover;
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2rem;
+            display: none;
+        }
+        #startbutton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2rem;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        }
+        #game {
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <button id="startbutton" onclick="startgame()">Hold up arrow to go up, release to go down | it begins immediatly when you press this button so start spamming up arrow</button>
+    <div id="game">
+        <canvas id="gameCanvas"></canvas>
+        <div id="gameOver">Game Over! Refresh to try again.</div>
+    </div>
+    <script>
+    function startgame() {
+        document.getElementById('startbutton').style.display = 'none'; // Hide the start button
+        document.getElementById('game').style.display = 'block'; // Show the game canvas and game over message
+        let lastTime = 0;
+        const fps = 120;
+        const interval = 1000 / fps;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const player = { x: 50, y: canvas.height / 2, size: 20, speed: 0, gravity: 0.4, lift: -0.7 };
+        const obstacles = [];
+        const obstacleWidth = 20;
+        const gapHeight = 100;
+        let gameOver = false;
+        let isHoldingUp = false;
+    
+        let timer = 20;
+        let timerInterval;
+    
+        function createObstacle() {
+            const gapY = Math.random() * (canvas.height - gapHeight);
+            obstacles.push({ x: canvas.width, gapY });
+        }
+    
+        function updateObstacles() {
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= 10;
+                if (obstacles[i].x + obstacleWidth < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+    
+        function drawObstacles() {
+            ctx.fillStyle = 'red';
+            for (const obs of obstacles) {
+                ctx.fillRect(obs.x, 0, obstacleWidth, obs.gapY);
+                ctx.fillRect(obs.x, obs.gapY + gapHeight, obstacleWidth, canvas.height - obs.gapY - gapHeight);
+            }
+        }
+    
+        function checkCollision() {
+            for (const obs of obstacles) {
+                if (
+                    player.x < obs.x + obstacleWidth &&
+                    player.x + player.size > obs.x &&
+                    (player.y < obs.gapY || player.y + player.size > obs.gapY + gapHeight)
+                ) {
+                    return true;
+                }
+            }
+            return player.y < 0 || player.y + player.size > canvas.height;
+        }
+    
+        function drawPlayer() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(player.x, player.y, player.size, player.size);
+        }
+    
+        // Draw the timer at the top center
+        function drawTimer() {
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Time Left: ${timer}`, canvas.width / 2, 30);
+        }
+    
+        // Start the timer countdown
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timer > 0) {
+                    timer--;
+                } else {
+                    clearInterval(timerInterval);
+                    window.location.href = "beemslevel17.html"; // Teleport to level 18
+                }
+            }, 1000);
+        }
+    
+        function gameLoop(currentTime) {
+            if (currentTime - lastTime >= interval) {
+                lastTime = currentTime;
+                if (gameOver) return;
+    
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+                // Apply gravity and update player position
+                if (isHoldingUp) {
+                    player.speed += player.lift; // Accelerate upwards while holding the key
+                } else {
+                    player.speed += player.gravity; // Apply gravity when not holding the key
+                }
+                player.y += player.speed;
+    
+                updateObstacles();
+                drawObstacles();
+                drawPlayer();
+                drawTimer(); // Draw the timer
+    
+                if (checkCollision()) {
+                    window.location.href = "Limbo.html"; // Teleport to level hub
+                }
+            }
+            requestAnimationFrame(gameLoop);
+        }
+    
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                isHoldingUp = true; // Start accelerating upwards
+            }
+        });
+    
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowUp') {
+                isHoldingUp = false; // Stop accelerating upwards
+            }
+        });
+    
+        setInterval(createObstacle, 1500);
+        startTimer(); // Start the timer
+        gameLoop();
+    }
+    </script>
+</body>
+</html>
