@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Beemslevel 18</title>
+        <link rel="icon" href="evilbubzeee.jpg"> <!-- Replace with your image path -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Butcherman&family=Rubik+Bubbles&family=Rubik+Burned&family=Tektur:wght@900&display=swap');
+            body {
+                background-color: #000000;
+                color: #FFFFFF;
+                font-family: 'Courier New', Courier, monospace;
+                text-align: center;
+                margin: 0;
+                padding: 0;
+            }
+            img {
+                width: 75%;
+                height: auto;
+            }
+            #game {
+                display: block;
+                margin: 0 auto;
+                background-color: #000000;
+                background-image: url('scaryforest.jpg');
+                background-size: cover;
+            }
+            p {
+                font-family: "Butcherman", system-ui;
+                font-size: 50px;
+                color: #FFFFFF;
+                text-shadow: 2px 2px 4px #000000;
+                margin: 0;
+                padding: 10px;
+            }
+            #gamecontainer {
+                display: none;
+            }
+            h1 {
+                font-size: 30px;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 5px;
+                margin-top: 25%;
+            }
+            button {
+                font-family: 'Butcherman', sans-serif;
+                font-size: 30px;
+                padding: 10px 20px;
+                background-color: #000000;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            #background {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="background"></canvas>
+        <h1>W A S D to move</h1>
+        <button onclick="startgame()">start</button>
+        <div id="gamecontainer">
+        <img src="bubzeeelocatetext.jpg">
+        <p id="timer">Time: 50s</p>
+        <p id="CollectedWigs">0/8</p>
+        <canvas id="game" width="800" height="800"></canvas>
+        </div>
+        <audio id="jumpscare" src="Lv18Death.mp3"></audio>
+        <audio id="theme" src="Lv18Theme.mp3"></audio>
+        <audio id="win" src="Lv18Win.mp3"></audio>
+        <script>
+            function startgame() {
+                const theme = document.getElementById("theme");
+                theme.play();
+                document.querySelector('button').style.display = 'none'; // Hide the start button
+                document.querySelector('h1').style.display = 'none'; // Hide the start button
+                setTimeout(() => {
+                document.getElementById('gamecontainer').style.display = 'block'; // Show the game container
+                const canvas = document.getElementById('game');
+                const ctx = canvas.getContext('2d');
+                let WigAmount = 0; // Initialize the wig count
+                let lastTime = 0;
+                const fps = 60;
+                const interval = 1000 / fps; // Time per frame (16.67ms for 60 FPS)
+                let imagesLoaded = 0;
+                let jumpscare = false;
+                const jumpscarecanvas = document.getElementById('background');
+                const jumpscarectx = jumpscarecanvas.getContext('2d'); // Use jumpscarecanvas here
+                jumpscarecanvas.width = window.innerWidth;
+                jumpscarecanvas.height = window.innerHeight;
+                const jumpscareimg = new Image();
+                jumpscareimg.src = 'evilbubzeee.jpg'; // Replace with the path to your image
+                jumpscareimg.onload = function () {
+                    jumpscarectx.drawImage(jumpscareimg, 0, 0, jumpscarecanvas.width, jumpscarecanvas.height); // Use jumpscarecanvas dimensions
+                };
+                let map = [
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 2, 0, 0, 1, 0, 2, 0, 1, 2, 0, 0, 0, 0, 0, 1],
+                    [1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1],
+                    [1, 0, 0, 0, 1, 0, 1, 0, 1, 2, 1, 0, 0, 0, 0, 1],
+                    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1],
+                    [1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1],
+                    [1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1],
+                    [1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1],
+                    [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+                    [1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+                    [1, 0, 2, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+                    [1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1],
+                    [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+                    [1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 1, 2, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                ];
+            
+                const brick = new Image();
+                brick.src = 'brick.png'; // Replace with the path to your brick image
+                const wig = new Image();
+                wig.src = 'lv18wig.png'; // Replace with the path to your wig image
+                const playerImage = new Image();
+                playerImage.src = 'playerpurrito.png'; // Replace with the path to your player image
+                const fog = new Image();
+                fog.src = 'darknesseffect.png'; // Replace with the path to your fog image
+                const evilBubzeee = new Image();
+                evilBubzeee.src = 'evilbubzeee.jpg'; // Replace with the path to your evil Bubzeee image
+            
+                let player = { x: 350, y: 350, width: 50, height: 50, speed: 5 };
+            
+                let keys = {};
+            
+                brick.onload = checkImagesLoaded;
+                wig.onload = checkImagesLoaded;
+                playerImage.onload = checkImagesLoaded;
+                fog.onload = checkImagesLoaded; // Ensure the fog image is loaded before drawing
+                evilBubzeee.onload = checkImagesLoaded; // Ensure the enemy image is loaded before drawing
+                function checkImagesLoaded() {
+                    imagesLoaded++;
+                    if (imagesLoaded === 5) {
+                        drawmap();
+                        update();
+                    }
+                }
+            
+                function drawmap() {
+                    for (let i = 0; i < map.length; i++) {
+                        for (let j = 0; j < map[i].length; j++) {
+                            if (map[i][j] === 1) {
+                                ctx.drawImage(brick, j * 50, i * 50, 50, 50); // Draw a 50px brick
+                            }
+                            if (map[i][j] === 2) {
+                                ctx.drawImage(wig, j * 50, i * 50, 50, 50); // Draw a 50px wig
+                            }
+                        }
+                    }
+                }
+            
+                function drawPlayer() {
+                    ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
+                }
+                let remainingTime = 50; // Set the initial countdown time to 50 seconds
+                let timerInterval; // Variable to store the interval ID
+                
+                function startTimer() {
+                    const timerElement = document.getElementById('timer');
+                    timerElement.innerHTML = `Time: ${remainingTime}s`; // Display the initial time
+                    timerInterval = setInterval(() => {
+                        remainingTime--;
+                        timerElement.innerHTML = `Time: ${remainingTime}s`; // Update the timer display
+                
+                        if (remainingTime <= 0) {
+                            clearInterval(timerInterval); // Stop the timer when it reaches 0
+                            gameOver(); // Call a function to handle the game over logic
+                        }
+                    }, 1000); // Update every second
+                }
+                
+                function stopTimer() {
+                    clearInterval(timerInterval); // Stop the timer
+                }
+                startTimer();
+                function gameOver() {
+                    jumpscare = true;
+                    document.getElementById('gamecontainer').style.display = 'none'; // Hide the game container
+                    jumpscarecanvas.style.display = 'block'; // Show the jumpscare canvas
+                    const jumpscaresound = document.getElementById("jumpscare");
+                    jumpscaresound.play();
+                    theme.pause();
+                    setTimeout(() => {
+                        window.location.href = "beemslevel11.html"; // Redirect to level 1 after 1.5 seconds
+                    }, 1500);
+                }
+                
+                let enemy = { x: 100, y: 100, width: 50, height: 50, speed: 2}; // Enemy starts at (100, 100)
+                
+                evilBubzeee.onload = checkImagesLoaded; // Ensure the enemy image is loaded before drawing
+                
+                function update() {
+                    if (!jumpscare) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        drawmap();
+                        drawPlayer();
+                        drawEnemy();
+                    
+                        // Draw the fog on top of the player and map
+                        drawFog();
+                    
+                        // Check for collision with wigs
+                        collectWig();
+                    }
+                }
+
+                // Start an interval to move the enemy every 500ms
+                setInterval(() => {
+                    moveEnemy();
+                
+                    // Check if the enemy touches the player
+                    if (isEnemyTouchingPlayer()) {
+                        jumpscare = true;
+                        document.getElementById('gamecontainer').style.display = 'none'; // Show the game container
+                        jumpscarecanvas.style.display = 'block'; // Show the jumpscare canvas
+                        const jumpscaresound = document.getElementById("jumpscare");
+                        jumpscaresound.play();
+                        theme.pause();
+                        stopTimer(); // Stop the timer
+                        setTimeout(() => {
+                            window.location.href = "beemslevel11.html"; // Redirect to level 1 after 1.5 seconds
+                        }, 1400); // 1500 milliseconds = 1.5 seconds
+                    }
+                
+                    // Redraw the canvas after the enemy moves
+                    if (!jumpscare) {
+                        update();
+                    }
+                }, 50);
+                
+                function moveEnemy() {
+                    // Calculate the direction vector from the enemy to the player
+                    const dx = player.x - enemy.x;
+                    const dy = player.y - enemy.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                    // Normalize the direction vector and move the enemy
+                    if (distance > 0) {
+                        enemy.x += (dx / distance) * enemy.speed;
+                        enemy.y += (dy / distance) * enemy.speed;
+                    }
+                }
+                
+                function drawEnemy() {
+                    ctx.drawImage(evilBubzeee, enemy.x, enemy.y, enemy.width, enemy.height);
+                }
+                
+                function isEnemyTouchingPlayer() {
+                    return (
+                        player.x < enemy.x + enemy.width &&
+                        player.x + player.width > enemy.x &&
+                        player.y < enemy.y + enemy.height &&
+                        player.y + player.height > enemy.y
+                    );
+                }
+                
+                function drawFog() {
+                    ctx.drawImage(fog, player.x - 750, player.y - 700, 1500, 1500); // Draw the fog over the entire canvas
+                }
+                
+                function collectWig() {
+                    // Check the player's position against the map
+                    const playerRow = Math.floor(player.y / 50); // Convert y position to map row
+                    const playerCol = Math.floor(player.x / 50); // Convert x position to map column
+                
+                    // Ensure the player is within the map bounds
+                    if (playerRow >= 0 && playerRow < map.length && playerCol >= 0 && playerCol < map[0].length) {
+                        if (map[playerRow][playerCol] === 2) {
+                            map[playerRow][playerCol] = 0;
+                            WigAmount++;
+                            document.getElementById("CollectedWigs").innerHTML = WigAmount+"/8";
+                            update();
+                            if (WigAmount >= 8) {
+                                jumpscare = true;
+                                const win = document.getElementById("win");
+                                stopTimer(); // Stop the timer
+                                win.play();
+                                theme.pause();
+                                setTimeout(() => {
+                                    window.location.href = "beemslevelVictory.html"; // Redirect to next level
+                                }, 1400); // 1500 milliseconds = 1.5 seconds
+                            }
+                        }
+                    }
+                }
+                document.addEventListener('keydown', (e) => {
+                    const key = e.key.toLowerCase();
+                    if (!keys[key]) { // Prevent holding the button
+                        keys[key] = true;
+                
+                        // Store the player's current position
+                        const prevX = player.x;
+                        const prevY = player.y;
+                
+                        // Move the player based on the key pressed
+                        if (key === 'w' && player.y > 0) player.y -= 50; // Move up
+                        if (key === 'a' && player.x > 0) player.x -= 50; // Move left
+                        if (key === 's' && player.y + player.height < canvas.height) player.y += 50; // Move down
+                        if (key === 'd' && player.x + player.width < canvas.width) player.x += 50; // Move right
+                
+                        // Check for collision with walls
+                        if (isCollidingWithWall()) {
+                            // Move the player back to the previous position if colliding
+                            player.x = prevX;
+                            player.y = prevY;
+                        }
+                
+                        // Redraw the canvas after movement
+                        update();
+                    }
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    keys[e.key.toLowerCase()] = false;
+                });
+                
+                function isCollidingWithWall() {
+                    // Check the player's position against the map
+                    const playerRow = Math.floor(player.y / 50); // Convert y position to map row
+                    const playerCol = Math.floor(player.x / 50); // Convert x position to map column
+                
+                    // Ensure the player is within the map bounds
+                    if (playerRow >= 0 && playerRow < map.length && playerCol >= 0 && playerCol < map[0].length) {
+                        return map[playerRow][playerCol] === 1; // Return true if the player is on a wall
+                    }
+                    return false;
+                    }
+                }, 3400);
+            }
+        </script>
+    </body>
+</html>

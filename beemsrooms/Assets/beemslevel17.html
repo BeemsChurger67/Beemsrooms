@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beemslevel 17</title>
+    <link rel="icon" href="geometrydashship.jpg"> <!-- Replace with your image path -->
     <style>
+        
         body {
             margin: 0;
             overflow: hidden;
+            background-image: url('blackgradientcircle.jpg'); /* Replace with your image path */
+            background-size: cover;
         }
         canvas {
             background: black;
@@ -23,23 +27,42 @@
             font-size: 2rem;
             display: none;
         }
+        #startbutton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2rem;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        }
+        #game {
+            display: none;
+        }
+        
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="gameOver">Game Over! Refresh to try again.</div>
+    <button id="startbutton" onclick="startgame()">Hold up arrow to go up, release to go down | it begins immediatly when you press this button so start spamming up arrow</button>
+    <div id="game">
+        <canvas id="gameCanvas"></canvas>
+        <div id="gameOver">Game Over! Refresh to try again.</div>
+    </div>
     <script>
+    function startgame() {
+        document.getElementById('startbutton').style.display = 'none'; // Hide the start button
+        document.getElementById('game').style.display = 'block'; // Show the game canvas and game over message
         let lastTime = 0;
-        const fps = 60;
+        const fps = 120;
         const interval = 1000 / fps;
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        const player = { x: 50, y: canvas.height / 2, size: 10, speed: 0, gravity: 1.2, lift: -2 };
+        const player = { x: 50, y: canvas.height / 2, size: 20, speed: 0, gravity: 0.4, lift: -0.7 };
         const obstacles = [];
         const obstacleWidth = 20;
-        const gapHeight = 100;
+        const gapHeight = 150;
         let gameOver = false;
         let isHoldingUp = false;
     
@@ -53,7 +76,7 @@
     
         function updateObstacles() {
             for (let i = obstacles.length - 1; i >= 0; i--) {
-                obstacles[i].x -= 15;
+                obstacles[i].x -= 10;
                 if (obstacles[i].x + obstacleWidth < 0) {
                     obstacles.splice(i, 1);
                 }
@@ -101,7 +124,7 @@
                     timer--;
                 } else {
                     clearInterval(timerInterval);
-                    window.location.href = "beemslevelVictory.html"; // Teleport to level 18
+                    window.location.href = "beemslevel18.html"; // Teleport to level 18
                 }
             }, 1000);
         }
@@ -127,7 +150,7 @@
                 drawTimer(); // Draw the timer
     
                 if (checkCollision()) {
-                    window.location.href = "../beemslevel hub.html"; // Teleport to level hub
+                    window.location.href = "beemslevel11.html"; // Teleport to level hub
                 }
             }
             requestAnimationFrame(gameLoop);
@@ -145,9 +168,10 @@
             }
         });
     
-        setInterval(createObstacle, 2000);
+        setInterval(createObstacle, 1500);
         startTimer(); // Start the timer
         gameLoop();
+    }
     </script>
 </body>
 </html>

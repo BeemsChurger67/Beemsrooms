@@ -161,7 +161,7 @@ function gameLoop() {
     keys[" "] = false; // Prevent constant flipping
   }
 
-  const currentPlayer = activeWorld === "light" ? player1 : player2;
+  const currentPlayer = activeWorld === "light" ? player1 : player2; alert
   currentPlayer.update();
 
   for (let plat of platforms) {
@@ -174,7 +174,6 @@ function gameLoop() {
 
   // Check if both players are in the top-left corner
   if (player1.x < 0 && player1.y < 0 && player2.x < 0 && player2.y < 0) {
-    alert("Start spamming the up arrow key");
     player1.y = 200;
     player2.y = 200;
     window.location.href = "beemslevel17.html"; // Teleport to the next level
