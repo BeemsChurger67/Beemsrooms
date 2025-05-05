@@ -15,6 +15,8 @@
                 text-align: center;
                 margin: 0;
                 padding: 0;
+                background-image: url('Lv18Maze.jpg');
+                background-repeat: no-repeat;
             }
             img {
                 width: 75%;
@@ -265,7 +267,7 @@
                 }
                 
                 function drawFog() {
-                    ctx.drawImage(fog, player.x - 750, player.y - 700, 1500, 1500); // Draw the fog over the entire canvas
+                    ctx.drawImage(fog, player.x - 825, player.y - 750, 1650, 1650); // Draw the fog over the entire canvas
                 }
                 
                 function collectWig() {
@@ -292,7 +294,7 @@
                                 win.play();
                                 theme.pause();
                                 setTimeout(() => {
-                                    window.location.href = "beemslevelVictory.html"; // Redirect to next level
+                                    window.location.href = "beemslevel19.html"; // Redirect to next level
                                 }, 1400); // 1500 milliseconds = 1.5 seconds
                             }
                         }

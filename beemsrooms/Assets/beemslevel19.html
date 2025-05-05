@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>The Barrier</title>
+        <link rel="icon" href="invertedsigmacat.png">
+        <style>
+            body {
+                font-family: "arial";
+                background-image: url('invertedsigmacat.png'); /* Replace with your image path */
+                margin: 0; /* Remove default margin */
+                display: flex; /* Use flexbox */
+                flex-direction: column; /* Stack elements vertically */
+                justify-content: center; /* Center elements vertically */
+                align-items: center; /* Center elements horizontally */
+                height: 100vh; /* Set the height to fill the viewport */
+                gap: 10px;
+                color: white;
+            }
+            #container {
+                background-image: url("blackwhitegradient.jpg");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                border-radius: 10px; /* Rounded corners */
+                border: 5px solid #000000; /* Border color */
+                padding: 20px; /* Padding inside the container */
+                box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5); /* Shadow effect */
+                text-align: center; /* Center text inside the container */
+            }
+            button {
+                color: rgb(255, 255, 255); /* Button text color */
+                cursor: pointer; /* Pointer cursor on hover */
+                background-image: url("blackwhitegradient.jpg");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            #barrier {
+                font-size: 50px; /* Font size for the title */
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h1 id="barrier">The Barrier</h1>
+            <h1>the code is in these levels:</h1>
+            <h4>beemslevel 11: 1st and 2nd digits are how many words are in the first sentence.</h4>
+            <h4>beemslevel 12: 3rd and 4th digits are how long the level is.</h4>
+            <h4>beemslevel 14: 5rd, 6th and 7th digits are how much score you have to get.</h4>
+            <h4>beemslevel 18: 8th digit is how many wigs you have to collect.</h4>
+            <input id="code"><button id="submit" onclick="checkCode()">Submit</button>
+            <br><br>
+            <button onclick="window.location.href = 'beemslevel11.html';">Beemslevel 11</button>
+            <button onclick="window.location.href = 'beemslevel12.html';">Beemslevel 12</button>
+            <button onclick="window.location.href = 'beemslevel14.html';">Beemslevel 14</button>
+            <button onclick="window.location.href = 'beemslevel18.html';">Beemslevel 18</button>
+        </div>
+        <script>
+            const input = document.getElementById("code");
+            const submitButton = document.getElementById("submit");
+            const correctCode = "14455008"; // Replace with the actual code
+            function checkCode() {
+                if (input.value === correctCode) {
+                    alert("⍓︎□︎◆︎ ♋︎♍︎⧫︎◆︎♋︎●︎●︎⍓︎ ♎︎♓︎♎︎ ♓︎⧫︎✍︎ 🕈︎♏︎●︎●︎ ♑︎□︎□︎♎︎ ●︎◆︎♍︎🙵 ♓︎⧫︎⬧︎ ■︎□︎⬥︎ □︎■︎♏︎ □︎♐︎ ⧫︎♒︎♏︎ ●︎♋︎⬧︎⧫︎ ●︎♏︎❖︎♏︎●︎⬧︎ ♌︎♏︎♐︎□︎❒︎♏︎ ♌︎♓︎■︎♑︎♏︎❒︎●︎♋︎■︎♎︎");
+                    window.location.href = "beemslevel20.html"; // Redirect to the next level
+                } else {
+                    alert("❌");
+                }
+            }
+        </script>
+    </body>
+</html>
