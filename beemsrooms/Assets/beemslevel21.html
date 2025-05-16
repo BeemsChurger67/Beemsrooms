@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aftermath</title>
+    <style>
+        @font-face {
+            font-family: 'Undertale Font';
+            src: url('UF.otf') format('opentype');
+        }
+        body {
+            background-color: #000000;
+            font-family: "Undertale Font", sans-serif;
+            text-align: center;
+            color: white;
+            display: flex; /* Enable Flexbox */
+            flex-direction: column; /* Stack elements vertically */
+            justify-content: center; /* Center elements vertically */
+            align-items: center; /* Center elements horizontally */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove default margin */
+        }
+        #beginning {
+            font-family: "Undertale Font", sans-serif;
+            align-items: center;
+            margin-top: 200px;
+        }
+        #text {
+            border: 4px solid white;
+            display: inline-block; /* Fix the border width issue */
+            padding: 10px;
+            font-size: 20px;
+        }
+        #nextdialogue {
+            font-family: "Undertale Font", sans-serif;
+            font-size: 16px;
+            background-color: #000000; /* Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <img src="beemscat.png" width="200" height="200" id="beems">
+    <br><br>
+    <div id="text">
+        <p id="dialogue"></p>
+        <button id="nextdialogue" onclick="changedialogue()">Next</button>
+    </div>
+    <script>
+        let currentDialogue = -1;
+        function changedialogue() {
+        let dialogue = [
+            "Oh.",
+            "My bad bro",
+            "I thought you were bad",
+            "I was watching you when you failed at señor purrito",
+            "and thought 'Wow your pretty bad'",
+            "i guess i was completely wrong",
+            "what did i do wrong?",
+            "how did i fail?",
+            "why did i fail?",
+            "well player good job for proving me wrong",
+            "goodbye",
+            "Beemschurger67 Defeated!"
+        ];
+        currentDialogue++;
+        document.getElementById("dialogue").innerHTML = dialogue[currentDialogue];
+        if (currentDialogue >= dialogue.length-1) {
+            document.getElementById("beems").style.display = "none"
+        }
+        if (currentDialogue >= dialogue.length) {
+            window.location.href = "beemslevelVictory.html"
+        }
+    }
+    </script>
+</body>
+</html>

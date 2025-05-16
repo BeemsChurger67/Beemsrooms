@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<style>
+  /* Style the image */
+  img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+  }
+</style>
+  </head>
+  <body>
+    <!-- Add the image to the document -->
+    <img src="cat.png" id="pngcat" />
+
+    <script>
+      // Get the image element
+      var img = document.getElementById("pngcat");
+      
+      // Set the image's initial position
+      var x = Math.floor(Math.random() * (window.innerWidth - img.width));
+      var y = Math.floor(Math.random() * (window.innerHeight - img.height));
+      img.style.top = y + "px";
+      img.style.left = x + "px";
+      
+      // Define a function to teleport the image to a random position
+      function teleportImage() {
+        x = Math.floor(Math.random() * (window.innerWidth - img.width));
+        y = Math.floor(Math.random() * (window.innerHeight - img.height));
+        img.style.top = y + "px";
+        img.style.left = x + "px";
+      }
+      
+      // Call the teleportImage function when the image is clicked
+      img.addEventListener("click", teleportImage);
+    </script>
+  </body>
+  <head>
+    <style>
+      /* Style the image */
+      img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+  <head>
+    <style>
+      /* Position the image */
+      #cat {
+        position: absolute;
+        top: 50px;
+        left: 400px;
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Add the image to the page -->
+    <img id="cat" src="enemy.png" alt="cat">
+  </body>
+  <a href="beemslevel6.html">
+  <h1><div id="chicken" style="position: absolute; top: 50px; left: 50px;">🐔</div></h1></a>
+
+<script>
+  var chicken = document.getElementById("chicken");
+  var maxX = window.innerWidth - chicken.offsetWidth;
+  var maxY = window.innerHeight - chicken.offsetHeight;
+
+  setInterval(function() {
+    var x = Math.floor(Math.random() * maxX);
+    var y = Math.floor(Math.random() * maxY);
+
+    chicken.style.left = x + "px";
+    chicken.style.top = y + "px";
+  }, 1000);
+</script>
+  <head>
+    <style>
+      /* Style the jumbotron */
+      .jumbotron {
+        background-color: #f0f0f0;
+        padding: 20px;
+      }
+      
+      /* Style the jumbotron text */
+      .jumbotron p {
+        font-size: 24px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Add the jumbotron to the document -->
+    <div class="jumbotron">
+      <p><h1>Petre grif simulator</h1></p>
+      <p><h6>made by Chatgpt and me</h6></p>
+    </div>
+  </body>
+    <head>
+        <style>
+        /* Style the canvas */
+        canvas {
+            border: 1px solid black;
+        }
+        </style>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="script.js"></script>
+</head>
+  <head>
+    <div><h1>Press arrow keys to move idk</h1></div>
+    <title>Petre grif simulator</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <head>
+    <style>
+    </style>
+  </head>
+  
+  <head>
+    <style>
+      body {
+        background-color: gray;
+      }
+    </style>    
+    <canvas></canvas>
+  
+    <img id="image" src="grif.jpg" style="position:absolute; left:0; top:0;" alt="Image" />
+
+    <script>
+      var image = document.getElementById("image");
+      var x = 500;
+      var y = 500;
+      image.style.left = x + "px";
+      image.style.top = y + "px";
+      document.addEventListener("keydown", function(event) {
+        if (event.keyCode === 37) { // left arrow key
+          x -= 50;
+          image.style.left = x + "px";
+        }
+        else if (event.keyCode === 38) { // up arrow key
+          y -= 50;
+          image.style.top = y + "px";
+        }
+        else if (event.keyCode === 39) { // right arrow key
+          x += 50;
+          image.style.left = x + "px";
+        }
+        else if (event.keyCode === 40) { // down arrow key
+          ge.style.top = y + "px";
+        }
+      });
+    </script>
+  </body>
+  <body>
+  <head>
+    <style>
+      /* Position the image */
+      #chicken {
+        position: absolute;
+        top: 1000px;
+        left: 400px;
+        width: 600px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Add the image to the page -->
+    <img id="chicken" src="chickens.png" alt="chicken">
+  </body>
+</html>

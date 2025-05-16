@@ -53,6 +53,8 @@ var context = canvas.getContext('2d');
 
 // the canvas width & height, snake x & y, and the apple x & y, all need to be a multiples of the grid size in order for collision detection to work
 // (e.g. 16 * 25 = 400)
+let playerImg = new Image();
+playerImg.src = 'stupidcat.png'; // Replace with your image path
 var grid = 16;
 var count = 0;
 var eatCount = 0;
@@ -130,7 +132,7 @@ function loop() {
   snake.cells.forEach(function(cell, index) {
 
     // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
-    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+    context.drawImage(playerImg, cell.x, cell.y, grid, grid);
 
     // snake ate apple
     if (cell.x === apple.x && cell.y === apple.y) {

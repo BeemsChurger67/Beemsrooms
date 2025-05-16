@@ -65,6 +65,8 @@
         const gapHeight = 100;
         let gameOver = false;
         let isHoldingUp = false;
+        let playerImg = new Image();
+        playerImg.src = 'stupidcat.png'; // Replace with your player image path
     
         let timer = 20;
         let timerInterval;
@@ -107,6 +109,7 @@
         function drawPlayer() {
             ctx.fillStyle = 'white';
             ctx.fillRect(player.x, player.y, player.size, player.size);
+            ctx.drawImage(playerImg, player.x-player.size/2, player.y-player.size/2, player.size*2, player.size*2); // Draw the player image
         }
     
         // Draw the timer at the top center

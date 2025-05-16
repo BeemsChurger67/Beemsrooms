@@ -54,7 +54,8 @@
 </head>
 <body>
     <h1>get 500 score to win</h1>
-    <h1>You can also use up arrow to accelerate</h1>
+    <h1>get 1000 score for secret round 🤑</h1>
+    <h1>up arrow to accelerate</h1>
 <script>
 
 var myGamePiece;
@@ -62,7 +63,7 @@ var myObstacles = [];
 var myScore;
 
 function startGame() {
-    myGamePiece = new component(30, 30, "catexplode.png", 10, 120, "image");
+    myGamePiece = new component(30, 30, "stupidcat.png", 10, 120, "image");
     myGamePiece.gravity = 0.05;
     myScore = new component("30px", "Consolas", "white", 280, 40, "text");
     myGameArea.start();
@@ -207,7 +208,6 @@ document.addEventListener('keyup', function(e) {
 <br>
 <button id="startbutton" onclick="startGame()">START GAME</button>
 <br>
-<button onmousedown="accelerate(-0.4)" onmouseup="accelerate(0.3)">ACCELERATE</button>
 <p>Use the ACCELERATE button to stay in the air Get 1000 score</p>
 <button id="beemslevel15" onclick="window.location.href='beemslevel15.html';">next levlelee</button>
 <button id="secret" onclick="window.location.href='beemslevel14-A.html';">what</button>

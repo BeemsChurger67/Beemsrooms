@@ -31,7 +31,7 @@
   <button id="refreshButton" onclick="refresh()">Refresh</button>
   <div>press spacebar for something cool idk</div>
   <div>W,A,D to move</div>
-  <div>both characters need to be in the top left of the whole screen where the character isnt visible anymore</div>
+  <div>both characters need to be in the green square</div>
   <div>refresh if its impossible</div>
   <div></div>tip: switching characters makes the other character stay in the air</div>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -110,15 +110,14 @@ class Platform {
         ctx.shadowOffsetY = 5;
 
         // Draw the platform
-        ctx.fillStyle = this.world === "light" ? "#ffff66" : "#6666ff";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-
+        ctx.fillStyle = this.world === "light" ? "#ffff66" : "#6666ff"; ctx.fillRect(this.x, this.y, this.width, this.height);
         // Reset shadow properties
         ctx.shadowColor = "transparent";
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
     }
+  ctx.fillStyle = "lime"; ctx.fillRect(0,0,50,50);
 }
   
   checkCollision(player) {
@@ -174,16 +173,14 @@ function gameLoop() {
   currentPlayer.draw();
 
   // Check if both players are in the top-left corner
-  if (player1.x < 0 && player1.y < 0 && player2.x < 0 && player2.y < 0) {
+  if (player1.x < 50 && player1.y < 50 && player2.x < 50 && player2.y < 50) {
     player1.y = 200;
     player2.y = 200;
     window.location.href = "beemslevel17.html"; // Teleport to the next level
   }
-
-  requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+setInterval(gameLoop, 1000 / 100);
 </script>
 </body>
 </html>

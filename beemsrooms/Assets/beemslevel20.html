@@ -1,1 +1,612 @@
-<button onclick="window.location.href = 'beemslevelVictory.html';">Unfinished level</button>
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perihelion</title>
+    <link rel="icon" href="Lv20Icon.png">
+    
+    <style>
+        @font-face {
+            font-family: 'Undertale Font';
+            src: url('UF.otf') format('opentype');
+        }
+        body {
+            background-color: #000000;
+            font-family: "Undertale Font", sans-serif;
+            text-align: center;
+            color: white;
+        }
+        #beginning {
+            font-family: "Undertale Font", sans-serif;
+            align-items: center;
+            margin-top: 200px;
+        }
+        #fight {
+            display: none; /* Hide the fight section initially */
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center elements horizontally */
+            justify-content: center;
+        }
+        #text {
+            border: 4px solid white;
+            display: inline-block; /* Fix the border width issue */
+            padding: 10px;
+            font-size: 20px;
+        }
+        #nextdialogue, #skip {
+            font-family: "Undertale Font", sans-serif;
+            font-size: 16px;
+            background-color: #000000; /* Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #playercanvas {
+            background-color: #000000; /* Green */
+            border: 8px solid white;
+        }
+        #beems {
+            display: none;
+        }
+        #HealthDisplay {
+            font-size: 30px;
+        }
+        #attackbutton {
+            font-family: "Undertale Font", sans-serif;
+            background-color: #ff9100;
+            font-size: 60px;
+            border: 5px solid black;
+            cursor: pointer; /* Add a pointer cursor for better UX */
+        }
+
+        #attackbutton:hover {
+            background-color: #ff4500; /* Change background color on hover */
+            border-color: white; /* Change border color on hover */
+            transform: scale(1.1); /* Slightly enlarge the button on hover */
+        }
+        #Healthbar {
+            background-color: #ff0000;
+            width: 700px;
+            height: 100px;
+            border: 5px solid black;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="beginning">
+        <img src="beemscat.png" width="200" height="200" id="beems">
+        <br><br>
+        <div id="text">
+            <p id="dialogue">...</p>
+            <button id="nextdialogue" onclick="changedialogue()">Next</button>
+            <button id="skip" onclick="skip()">skip</button>
+        </div>
+    </div>
+    <div id="fight">
+        <canvas id="Healthbar"></canvas>
+        <canvas id="bosscanvas" width="600" height="400"></canvas>
+        <canvas id="playercanvas" width="460" height="460"></canvas>
+        <h2 id="HealthDisplay">HP: 100</h2>
+        <button id="attackbutton">FIGHT</button>
+    </div>
+    <script>
+    let currentDialogue = -1;
+    function skip() {
+        document.getElementById("beginning").style.display = "none"; // Hide the beginning section
+        const FinalBossTheme = new Audio('FinalBossTheme.mp3');
+        FinalBossTheme.loop = true;
+        FinalBossTheme.play();
+        setTimeout(() => {
+        document.getElementById("fight").style.display = "flex"; // Show the fight section
+        start(); // Start the boss fight
+        }, 3000);
+    }
+    function changedialogue() {
+        let dialogue = [
+            "Very well, player.",
+            "Did you really think you were gonna beat this game?",
+            "Are you stupid?",
+            "Like deadass? are we frfrfr",
+            "Well if you did. I the one and only BEEMSCHURGER67 HIMSELF will not let you",
+            "noob",
+            "BAD luck",
+
+        ];
+        currentDialogue++;
+        if (currentDialogue == 0) {
+            document.getElementById("beems").style.display = "inline-block"; // Show the image
+        }
+        document.getElementById("dialogue").innerHTML = dialogue[currentDialogue];
+        if (currentDialogue >= dialogue.length) {
+            document.getElementById("beginning").style.display = "none"; // Hide the beginning section
+            const FinalBossTheme = new Audio('FinalBossTheme.mp3');
+            FinalBossTheme.loop = true;
+            FinalBossTheme.play();
+            setTimeout(() => {
+            document.getElementById("fight").style.display = "flex"; // Show the fight section
+            start(); // Start the boss fight
+            }, 3000);
+        }
+    }
+    function start() {
+        const Catblaster = new Audio('catblaster.mp3');
+        const bosscanvas = document.getElementById('bosscanvas');
+        const bossctx = bosscanvas.getContext('2d');
+        const boss = new Image();
+        boss.src = 'beemscat.png';
+        let t = 1.6;
+        let a = 200;
+        let bossblur = 20;
+        function draw() {
+            bossctx.clearRect(0, 0, bosscanvas.width, bosscanvas.height); // Clear the canvas
+            t += -0.02 * (bossblur - 1);
+            for (let i = 0; i < bossblur; i++) {
+                t += 0.02;
+                bossctx.globalAlpha = i / bossblur;
+                let bossx = a * Math.cos(t);
+                let bossy = a * Math.sin(t) * Math.cos(t);
+                bossctx.drawImage(boss, bossx+a, bossy+a/2, 200, 200);
+            }
+        }
+        const playercanvas = document.getElementById('playercanvas');
+        const playerctx = playercanvas.getContext('2d');
+        document.body.style.backgroundImage = "url('redblackgradient.png')"; // Replace 'your-image.jpg' with the path to your image
+        document.body.style.backgroundSize = "cover"; // Ensures the image covers the entire screen
+        document.body.style.backgroundRepeat = "no-repeat"; // Prevents tiling
+        let player = new Image();
+        player.src = 'stupidcat.png'
+        let keys = {};
+        let playerSize = 50
+        let x = playercanvas.width / 2 - playerSize / 2; // Center the player horizontally
+        let y = playercanvas.height / 2 - playerSize / 2;
+        let playerSpeed = 3;
+        let corncats = []; // Array to store active bones
+        let health = 100;
+        let bosshealth = 6767;
+        let frame = 0;
+        let attackframe = 0;
+        const healthbar = document.getElementById("Healthbar")
+        const healthbarctx = healthbar.getContext("2d");
+        const corncatImage = new Image();
+        corncatImage.src = 'corncat.png'; // Replace with the path to your bone image
+        const corncat2Image = new Image();
+        corncat2Image.src = 'corncat2.png'; // Replace with the path to your bone image
+        const projectileImage = new Image();
+        projectileImage.src = 'chicken.png';
+        healthbarctx.fillStyle = "green"; // Set fill color
+        healthbarctx.fillRect(0, 0, bosshealth/700*100 / 3.2, 200);
+        healthbarctx.font = "30px Undertale Font";  // Font size and style
+        healthbarctx.fillStyle = "white";   // Text color
+        healthbarctx.fillText(`Health: ${Math.round(bosshealth)}/6767`, 10, 80);  // (text, x, y)
+
+        function spawnCorncat(side, speed, height, top) {
+            const corncat = {
+                side: side, // 0 for left, 1 for right
+                speed: speed,
+                height: height, 
+                top: top, // 0 for bottom, 1 for top
+                
+            };
+            if (corncat.side == 1) {
+                corncat.x = playercanvas.width; // Start from the right side
+            } else {
+                corncat.x = 0; // Start from the left side
+            }
+            corncats.push(corncat); // Add the bone to the array
+        }
+        function updateCorncats() {
+            for (let i = 0; i < corncats.length; i++) {
+                const corncat = corncats[i];
+                // Remove the bone if it goes off-screen
+                if (corncat.side == 0) {
+                    corncat.x += corncat.speed; // Move the bone to the right
+                    if (corncat.x > playercanvas.width) {
+                        corncats.splice(i, 1);
+                        i--; // Adjust index after removal
+                        continue;
+                    }
+                } else {
+                    corncat.x -= corncat.speed; // Move the bone to the right
+                    if (corncat.x < 0) {
+                        corncats.splice(i, 1);
+                        i--; // Adjust index after removal
+                        continue;
+                    }
+                }
+        
+                // Draw the bone
+                if (corncat.top == 1) {
+                    playerctx.drawImage(corncat2Image, corncat.x, 0, 20, corncat.height);
+                } else {
+                    playerctx.drawImage(corncatImage, corncat.x, playercanvas.height - corncat.height, 20, corncat.height);
+                }
+            }
+        }
+        function checkCollisions() {
+            for (let i = 0; i < corncats.length; i++) {
+                const corncat = corncats[i];
+        
+                // Check if the player intersects with the corncat
+                if (
+                    x < corncat.x + 20 && // Player's left edge is to the left of the corncat's right edge
+                    x + playerSize > corncat.x && // Player's right edge is to the right of the corncat's left edge
+                    y < (corncat.top === 1 ? 0 : playercanvas.height - corncat.height) + corncat.height && // Player's top edge is above the corncat's bottom edge
+                    y + playerSize > (corncat.top === 1 ? 0 : playercanvas.height - corncat.height) // Player's bottom edge is below the corncat's top edge
+                ) {
+                    // Collision detected
+                    health--
+                    // Handle collision (e.g., reduce health, restart game, etc.)
+                }
+            }
+        }
+        // Listen for keydown events
+        document.addEventListener('keydown', (event) => {
+            keys[event.key.toLowerCase()] = true; // Mark the key as pressed
+        });
+        
+        // Listen for keyup events
+        document.addEventListener('keyup', (event) => {
+            keys[event.key.toLowerCase()] = false; // Mark the key as released
+        });
+        const gasterBlasters = []; // Array to store active Gaster Blasters
+        const gasterImage = new Image();
+        gasterImage.src = 'sillyblackcat.jpg'; // Replace with your Gaster Blaster image
+        const gasterImage2 = new Image();
+        gasterImage2.src = 'sillyblackcat2.jpg'; // Replace with your Gaster Blaster image
+        function spawnGasterBlaster(x, y, direction) {
+            const gasterBlaster = {
+                x: x, // X position of the Gaster Blaster
+                y: y, // Y position of the Gaster Blaster
+                beamWidth: 1000, // Width of the beam
+                beamHeight: 50, // Height of the beam
+                beamActive: false, // Whether the beam is currently firing
+                beamDuration: 100, // How long the beam lasts
+                direction: direction, // Direction of the Gaster Blaster (0 for left, 1 for right)
+                timer: 0 // Timer to control beam firing
+            };
+            gasterBlasters.push(gasterBlaster);
+            Catblaster.pause();
+            Catblaster.currentTime = 0; // Reset to the beginning
+            Catblaster.play();
+        }
+        function updateGasterBlasters() {
+            for (let i = 0; i < gasterBlasters.length; i++) {
+                const gaster = gasterBlasters[i];
+
+                playerctx.save();
+                // Move origin to the center of the Gaster Blaster image
+                let cx = gaster.x + 50, cy = gaster.y + 50;
+                playerctx.translate(cx, cy);
+
+                // Rotate based on direction
+                if (gaster.direction === 1) { // down
+                    playerctx.rotate(Math.PI / 2);
+                } else if (gaster.direction === 2) { // left
+                    playerctx.rotate(Math.PI);
+                } else if (gaster.direction === 3) { // up
+                    playerctx.rotate(-Math.PI / 2);
+                }
+                // Draw the Gaster Blaster image centered
+                playerctx.drawImage(gasterImage, -50, -50, 100, 100);
+
+                // Handle beam firing
+                if (gaster.beamActive) {
+                    // Draw the beam starting from the mouth (right side of image)
+                    playerctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    playerctx.fillRect(50, -gaster.beamHeight / 2, gaster.beamWidth, gaster.beamHeight);
+                    playerctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                    playerctx.fillRect(50, -gaster.beamHeight / 2 + 7, gaster.beamWidth, gaster.beamHeight - 14);
+                }
+                playerctx.restore();
+
+                // Control beam timing
+                gaster.timer++;
+                if (gaster.timer === 100) { // Start firing the beam after 100 frames
+                    gaster.beamActive = true;
+                }
+                if (gaster.timer === 100 + gaster.beamDuration) { // Stop firing after beamDuration
+                    gaster.beamActive = false;
+                    gasterBlasters.splice(i, 1); // Remove the Gaster Blaster
+                    i--; // Adjust index after removal
+                }
+            }
+        }
+        function checkGasterCollisions() {
+            for (let i = 0; i < gasterBlasters.length; i++) {
+                const gaster = gasterBlasters[i];
+                if (!gaster.beamActive) continue;
+
+                // Calculate beam rectangle based on direction
+                let bx, by, bw, bh;
+                if (gaster.direction === 0) { // right
+                    bx = gaster.x + 100;
+                    by = gaster.y + 50 - gaster.beamHeight / 2;
+                    bw = gaster.beamWidth;
+                    bh = gaster.beamHeight;
+                } else if (gaster.direction === 1) { // down
+                    bx = gaster.x + 50 - gaster.beamHeight / 2;
+                    by = gaster.y + 100;
+                    bw = gaster.beamHeight;
+                    bh = gaster.beamWidth;
+                } else if (gaster.direction === 2) { // left
+                    bx = gaster.x - gaster.beamWidth;
+                    by = gaster.y + 50 - gaster.beamHeight / 2;
+                    bw = gaster.beamWidth;
+                    bh = gaster.beamHeight;
+                } else if (gaster.direction === 3) { // up
+                    bx = gaster.x + 50 - gaster.beamHeight / 2;
+                    by = gaster.y - gaster.beamWidth;
+                    bw = gaster.beamHeight;
+                    bh = gaster.beamWidth;
+                }
+
+                // AABB collision
+                if (
+                    x < bx + bw &&
+                    x + playerSize > bx &&
+                    y < by + bh &&
+                    y + playerSize > by
+                ) {
+                    health--
+                    // Handle collision (e.g., reduce health, restart game, etc.)
+                }
+            }
+        }
+        function movePlayer() {
+            if (keys['w'] && y > 0) y -= playerSpeed; // Move up
+            if (keys['a'] && x > 0) x -= playerSpeed; // Move left
+            if (keys['s'] && y < playercanvas.height - playerSize) y += playerSpeed; // Move down
+            if (keys['d'] && x < playercanvas.width - playerSize) x += playerSpeed; // Move right
+        }
+        const attackButton = document.getElementById("attackbutton");
+        attackButton.addEventListener("click", () => {
+            bosshealth -= Math.random() * 150 + 300; // Reduce boss health
+            healthbarctx.clearRect(0, 0, healthbar.width, healthbar.height); // Clear the canvas
+            healthbarctx.fillStyle = "green"; // Set fill color
+            healthbarctx.fillRect(0, 0, bosshealth/700*100 / 3.2, 200);
+            healthbarctx.font = "30px Undertale Font";  // Font size and style
+            healthbarctx.fillStyle = "white";   // Text color
+            healthbarctx.fillText(`Health: ${Math.round(bosshealth)}/6767`, 10, 80);  // (text, x, y)
+            attackButton.style.display = "none"
+            setTimeout(() => {
+                attackButton.style.display = "inline-block"
+            }, 7500)
+            if (bosshealth < 0) {window.location.href = "beemslevel21.html"}
+            
+        });
+        let warningTimers = []; // Array to track active warnings
+
+        function spawnWarning(x, y, width, height, duration) {
+            const warningImage = new Image();
+            warningImage.src = 'laserwarn.png'; // Path to your warning image
+
+            // Add the warning to the timers array, including the image
+            warningTimers.push({
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                duration: duration,
+                startTime: frame, // Track the frame when the warning starts
+                image: warningImage, // Store the image in the warning object
+            });
+        }
+
+        function updateWarnings() {
+            for (let i = 0; i < warningTimers.length; i++) {
+                const warning = warningTimers[i];
+                const elapsedFrames = frame - warning.startTime;
+
+                // Draw the warning using its stored image
+                playerctx.drawImage(warning.image, warning.x, warning.y, warning.width, warning.height);
+
+                // Remove the warning if its duration has passed
+                if (elapsedFrames >= warning.duration / 10) { // Convert duration (ms) to frames
+                    warningTimers.splice(i, 1);
+                    i--; // Adjust index after removal
+                }
+            }
+        }
+        let projectiles = []; // Array to store active projectiles
+
+        function spawnProjectiles(side, speed) {
+            const projectile = {
+                x: 0, // Initial x position
+                y: 0, // Initial y position
+                width: 20, // Width of the projectile
+                height: 20, // Height of the projectile
+                speedX: 0, // Horizontal speed
+                speedY: 0, // Vertical speed
+            };
+
+            // Set the initial position and speed based on the side
+            if (side === 0) { // Left to right
+                projectile.x = 0;
+                projectile.y = Math.random() * playercanvas.height; // Random vertical position
+                projectile.speedX = speed;
+                projectile.speedY = 0;
+            } else if (side === 1) { // Top to bottom
+                projectile.x = Math.random() * playercanvas.width; // Random horizontal position
+                projectile.y = 0;
+                projectile.speedX = 0;
+                projectile.speedY = speed;
+            } else if (side === 2) { // Right to left
+                projectile.x = playercanvas.width;
+                projectile.y = Math.random() * playercanvas.height; // Random vertical position
+                projectile.speedX = -speed;
+                projectile.speedY = 0;
+            } else if (side === 3) { // Bottom to top
+                projectile.x = Math.random() * playercanvas.width; // Random horizontal position
+                projectile.y = playercanvas.height;
+                projectile.speedX = 0;
+                projectile.speedY = -speed;
+            }
+
+            projectiles.push(projectile); // Add the projectile to the array
+        }
+        function updateProjectiles() {
+            for (let i = 0; i < projectiles.length; i++) {
+                const projectile = projectiles[i];
+
+                // Update the position of the projectile
+                projectile.x += projectile.speedX;
+                projectile.y += projectile.speedY;
+
+                // Remove the projectile if it goes off-screen
+                if (
+                    projectile.x < 0 || 
+                    projectile.x > playercanvas.width || 
+                    projectile.y < 0 || 
+                    projectile.y > playercanvas.height
+                ) {
+                    projectiles.splice(i, 1);
+                    i--; // Adjust index after removal
+                    continue;
+                }
+
+                // Check collision with the player
+                if (
+                    projectile.x < x + playerSize && // Projectile's left edge is to the left of the player's right edge
+                    projectile.x + projectile.width > x && // Projectile's right edge is to the right of the player's left edge
+                    projectile.y < y + playerSize && // Projectile's top edge is above the player's bottom edge
+                    projectile.y + projectile.height > y // Projectile's bottom edge is below the player's top edge
+                ) {
+                    health -= 1; // Reduce player's health by 1 every frame
+                }
+
+                // Draw the projectile
+                playerctx.fillStyle = "red"; // Set projectile color
+                playerctx.drawImage(projectileImage, projectile.x, projectile.y, projectile.width, projectile.height);
+            }
+        }
+        function update() {
+            playerctx.clearRect(0, 0, playercanvas.width, playercanvas.height); // Clear the canvas
+            draw(); // Draw the boss
+            updateCorncats(); // Update and draw corncats
+            updateGasterBlasters(); // Update and draw Gaster Blasters
+            checkCollisions(); // Check collisions with corncats
+            checkGasterCollisions(); // Check collisions with Gaster Blaster beams
+            updateProjectiles(); // Update and draw projectiles
+            updateWarnings(); // Update and draw warnings
+            movePlayer(); // Move the player
+            playerctx.drawImage(player, x, y, playerSize, playerSize); // Draw the player image
+            frame++;
+            document.getElementById("HealthDisplay").textContent = "HP: " + health;
+            if (health <= 0) {
+                location.reload();
+            }
+        }
+        function gasterblasterattack() {
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * playercanvas.width;
+                const y = Math.random() * playercanvas.height;
+                const direction = Math.floor(Math.random() * 4); // Random direction (0-3)
+                spawnGasterBlaster(x, y, direction);
+            }
+        }
+        function gasterblasterattack2() {
+            for (let i = 0; i < 5; i++) {
+                spawnGasterBlaster(0, i * 115, 0);
+                spawnGasterBlaster(400, i * 115, 2);
+            }
+        }
+        function corncatattack() {
+            setTimeout(() => {spawnCorncat(0,3,190,0);spawnCorncat(0,3,190,1);spawnCorncat(1,3,190,0);spawnCorncat(1,3,190,1);}, 1);
+            setTimeout(() => {spawnCorncat(0,3,50,0);spawnCorncat(0,3,330,1);spawnCorncat(1,3,50,0);spawnCorncat(1,3,330,1);}, 1200);
+            setTimeout(() => {spawnCorncat(0,3,300,0);spawnCorncat(0,3,80,1);spawnCorncat(1,3,300,0);spawnCorncat(1,3,80,1);}, 2400);
+            setTimeout(() => {spawnCorncat(0,3,190,0);spawnCorncat(0,3,190,1);spawnCorncat(1,3,190,0);spawnCorncat(1,3,190,1);}, 3600);
+        }
+        function warningcornattack() {
+            spawnWarning(0, 50, 460, 410, 1500); // Spawns a warning at (100, 200) with width
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 1500);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 1600);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 1700);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 1800);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 1900);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2000);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2100);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2200);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2300);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2400);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2500);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2600);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2700);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2800);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 2900);
+            setTimeout(() => {spawnCorncat(0,8,400,0);spawnCorncat(1,8,400,0);}, 3000);
+        }
+        function spiralBarrage() {
+            const centerX = playercanvas.width / 2; // Center of the canvas
+            const centerY = playercanvas.height / 2;
+            const warningDuration = 500; // Duration of the warning in milliseconds
+            const attackDuration = 3500; // Duration of the spiral barrage in milliseconds
+            const interval = 50; // Time between each projectile spawn
+            const speed = 3; // Speed of the projectiles
+
+            // Spawn a warning at the center of the canvas
+            spawnWarning(centerX - 50, centerY - 50, 100, 100, warningDuration);
+
+            // Start the spiral barrage after the warning duration
+            setTimeout(() => {
+                let angle = 0; // Starting angle
+
+                // Start spawning projectiles in a spiral
+                const spiralInterval = setInterval(() => {
+                    // Calculate the position of the projectile based on the angle
+                    const x = centerX + Math.cos(angle) * 10; // Adjust radius as needed
+                    const y = centerY + Math.sin(angle) * 10;
+
+                    // Spawn the projectile
+                    const projectile = {
+                        x: x,
+                        y: y,
+                        width: 20,
+                        height: 20,
+                        speedX: Math.cos(angle) * speed,
+                        speedY: Math.sin(angle) * speed,
+                    };
+                    projectiles.push(projectile);
+
+                    // Increment the angle for the next projectile
+                    angle += Math.PI / 16; // Smaller increment for more projectiles
+                }, interval);
+
+                // Stop the spiral barrage after the attack duration
+                setTimeout(() => {
+                    clearInterval(spiralInterval);
+                }, attackDuration);
+            }, warningDuration); // Delay the spiral barrage until the warning ends
+        }
+        function projectilesattack() {
+            for (let i = 0; i < 25; i++) { // Spawn 20 projectiles at intervals
+                setTimeout(() => {
+                    const side = Math.floor(Math.random() * 4); // Random side (0-3)
+                    const speed = 2; // Set a fixed speed for the projectiles
+                    spawnProjectiles(side, speed); // Call spawnProjectiles with correct arguments
+                }, i * 100); // Delay each projectile by 100ms
+            }
+        }
+        function bossAttacks() {
+            const randomAttack = Math.floor(Math.random() * 6);
+            if (randomAttack === 0) {gasterblasterattack()}
+            if (randomAttack === 1) {corncatattack()}
+            if (randomAttack === 2) {gasterblasterattack2()}
+            if (randomAttack === 3) {warningcornattack()}
+            if (randomAttack === 4) {projectilesattack()}
+            if (randomAttack === 5) {spiralBarrage()}
+        }
+        function attack() {
+            bosshealth -= Math.random() * 1000
+        }
+        setInterval(update, 10);
+        setInterval(() => {bossAttacks();}, 4000);
+        // spawnCorncat(0, 3, 100, 0) (side, speed, height, top)
+        // spawnGasterBlaster(300, 300, 3) (x, y, direction)
+        // spawnProjectiles(0,3) (side,speed)
+    }
+    </script>
+</body>
+</html>

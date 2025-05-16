@@ -101,17 +101,20 @@
             resetTimer();
         }
 
-        function checkAnswer() {
-            const userAnswer = parseInt(document.getElementById("answer").value);
-            if (userAnswer === correctAnswer) {
-                questionCount++;
-                difficulty += 5;  // Increase difficulty over time
-                generateQuestion(); 
-            } else {
-                TeleportToStart();  // Wrong answer → restart
-            }
-        }
+    function checkAnswer() {
+        const userInput = document.getElementById("answer").value; // Get raw input as a string
+        const userAnswer = parseInt(userInput); // Convert to a number
 
+        if (userInput.toLowerCase() === "carrot") { // Check if the input is "carrot"
+            window.location.href = "beemslevel3-A.html"; // Redirect to level 4
+        } else if (userAnswer === correctAnswer) { // Check if the input matches the correct answer
+            questionCount++;
+            difficulty += 5; // Increase difficulty over time
+            generateQuestion();
+        } else {
+            TeleportToStart(); // Wrong answer → restart
+        }
+    }
         function resetTimer() {
             clearInterval(timerInterval);
             timeLeft = 10;
