@@ -496,7 +496,8 @@
             frame++;
             document.getElementById("HealthDisplay").textContent = "HP: " + health;
             if (health <= 0) {
-                location.reload();
+                window.location.reload();
+                health = 10000000
             }
         }
         function gasterblasterattack() {
