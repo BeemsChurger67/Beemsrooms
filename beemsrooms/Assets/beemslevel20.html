@@ -625,7 +625,7 @@
         let lightningStrikes = []; // Array to store active lightning strikes
 
         function lightningStrikeAttack() {
-            const numStrikes = 6; // Number of lightning strikes
+            const numStrikes = 5; // Number of lightning strikes
             const warningDuration = 1000; // Duration of the warning in milliseconds
             const lightningDuration = 500; // Duration of the lightning strike in milliseconds
 
@@ -695,7 +695,8 @@
             bosshealth -= Math.random() * 1000
         }
         setInterval(update, 10);
-        setInterval(() => {bossAttacks();}, 4000);
+        setInterval(() => {bossAttacks();}, 3900);
+        bossAttacks();
         // spawnCorncat(0, 3, 100, 0) (side, speed, height, top)
         // spawnGasterBlaster(300, 300, 3) (x, y, direction)
         // spawnProjectiles(0,3) (side,speed)
