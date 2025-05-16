@@ -491,6 +491,7 @@
             checkGasterCollisions(); // Check collisions with Gaster Blaster beams
             updateProjectiles(); // Update and draw projectiles
             updateWarnings(); // Update and draw warnings
+            updateLightningStrikes()
             movePlayer(); // Move the player
             playerctx.drawImage(player, x, y, playerSize, playerSize); // Draw the player image
             frame++;
@@ -501,7 +502,7 @@
             }
         }
         function gasterblasterattack() {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 4; i++) {
                 const x = Math.random() * playercanvas.width;
                 const y = Math.random() * playercanvas.height;
                 const direction = Math.floor(Math.random() * 4); // Random direction (0-3)
@@ -510,8 +511,8 @@
         }
         function gasterblasterattack2() {
             for (let i = 0; i < 5; i++) {
-                spawnGasterBlaster(0, i * 115, 0);
-                spawnGasterBlaster(400, i * 115, 2);
+                spawnGasterBlaster(0, i * 120, 0);
+                spawnGasterBlaster(400, i * 120, 2);
             }
         }
         function corncatattack() {
@@ -590,14 +591,105 @@
                 }, i * 100); // Delay each projectile by 100ms
             }
         }
+        function explodingCircles() {
+            const numCircles = 5; // Number of circles to spawn
+            const explosionDelay = 1500; // Delay before each circle explodes (in milliseconds)
+            const numProjectiles = 8; // Number of projectiles per explosion
+            const projectileSpeed = 2; // Speed of the projectiles
+
+            for (let i = 0; i < numCircles; i++) {
+                // Random position for each circle
+                const circleX = Math.random() * playercanvas.width;
+                const circleY = Math.random() * playercanvas.height;
+
+                // Spawn a warning circle
+                spawnWarning(circleX - 25, circleY - 25, 50, 50, explosionDelay);
+
+                // Trigger the explosion after the delay
+                setTimeout(() => {
+                    for (let j = 0; j < numProjectiles; j++) {
+                        const angle = (Math.PI * 2 / numProjectiles) * j; // Spread projectiles evenly in a circle
+                        const projectile = {
+                            x: circleX,
+                            y: circleY,
+                            width: 20,
+                            height: 20,
+                            speedX: Math.cos(angle) * projectileSpeed,
+                            speedY: Math.sin(angle) * projectileSpeed,
+                        };
+                        projectiles.push(projectile);
+                    }
+                }, explosionDelay);
+            }
+        }
+        let lightningStrikes = []; // Array to store active lightning strikes
+
+        function lightningStrikeAttack() {
+            const numStrikes = 5; // Number of lightning strikes
+            const warningDuration = 1000; // Duration of the warning in milliseconds
+            const lightningDuration = 500; // Duration of the lightning strike in milliseconds
+
+            for (let i = 0; i < numStrikes; i++) {
+                const strikeX = Math.random() * playercanvas.width; // Random x position for the strike
+
+                // Add the lightning strike to the array
+                lightningStrikes.push({
+                    x: strikeX - 25,
+                    width: 50,
+                    height: playercanvas.height,
+                    warningTime: frame + warningDuration / 10, // Convert milliseconds to frames
+                    strikeTime: frame + (warningDuration + lightningDuration) / 10, // End time of the strike
+                    active: false, // Whether the lightning is currently active
+                });
+            }
+        }
+
+        function updateLightningStrikes() {
+            const warningImage = new Image();
+            warningImage.src = 'laserwarn.png';
+            for (let i = 0; i < lightningStrikes.length; i++) {
+                const strike = lightningStrikes[i];
+
+                // Show warning
+                if (frame < strike.warningTime) {
+                    playerctx.drawImage(warningImage,strike.x, 0, strike.width, strike.height);
+                }
+
+                // Activate lightning
+                if (frame >= strike.warningTime && frame < strike.strikeTime) {
+                    strike.active = true;
+                    const lightningImage = new Image();
+                    lightningImage.src = 'lightning.png'; // Path to your lightning image
+                    playerctx.drawImage(lightningImage, strike.x, 0, strike.width, strike.height);
+
+                    // Check collision with the player
+                    if (
+                        x + playerSize > strike.x && // Player's right edge is to the right of the lightning's left edge
+                        x < strike.x + strike.width && // Player's left edge is to the left of the lightning's right edge
+                        y + playerSize > 0 && // Player's bottom edge is below the top of the canvas
+                        y < playercanvas.height // Player's top edge is above the bottom of the canvas
+                    ) {
+                        health -= 1; // Reduce player's health
+                    }
+                }
+
+                // Remove lightning after its duration
+                if (frame >= strike.strikeTime) {
+                    lightningStrikes.splice(i, 1);
+                    i--; // Adjust index after removal
+                }
+            }
+        }
         function bossAttacks() {
-            const randomAttack = Math.floor(Math.random() * 6);
-            if (randomAttack === 0) {gasterblasterattack()}
-            if (randomAttack === 1) {corncatattack()}
-            if (randomAttack === 2) {gasterblasterattack2()}
-            if (randomAttack === 3) {warningcornattack()}
-            if (randomAttack === 4) {projectilesattack()}
-            if (randomAttack === 5) {spiralBarrage()}
+            const randomAttack = Math.floor(Math.random() * 8); // Adjust range for new attack
+            if (randomAttack === 0) { gasterblasterattack(); }
+            if (randomAttack === 1) { corncatattack(); }
+            if (randomAttack === 2) { gasterblasterattack2(); }
+            if (randomAttack === 3) { warningcornattack(); }
+            if (randomAttack === 4) { projectilesattack(); }
+            if (randomAttack === 5) { spiralBarrage(); }
+            if (randomAttack === 6) { explodingCircles(); }
+            if (randomAttack === 7) { lightningStrikeAttack(); }
         }
         function attack() {
             bosshealth -= Math.random() * 1000
@@ -608,6 +700,7 @@
         // spawnGasterBlaster(300, 300, 3) (x, y, direction)
         // spawnProjectiles(0,3) (side,speed)
     }
+    
     </script>
 </body>
 </html>
