@@ -85,12 +85,6 @@ function getRandomInt(min, max) {
 
 // game loop
 function loop() {
-  requestAnimationFrame(loop);
-
-  // slow game loop to 15 fps instead of 60 (60/15 = 4)
-  if (++count < 10) {
-    return;
-  }
 
   count = 0;
   context.clearRect(0,0,canvas.width,canvas.height);
@@ -177,26 +171,30 @@ document.addEventListener('keydown', function(e) {
   if (e.which === 37 && snake.dx === 0) {
     snake.dx = -grid;
     snake.dy = 0;
+    loop();
   }
   // up arrow key
   else if (e.which === 38 && snake.dy === 0) {
     snake.dy = -grid;
     snake.dx = 0;
+    loop();
   }
   // right arrow key
   else if (e.which === 39 && snake.dx === 0) {
     snake.dx = grid;
     snake.dy = 0;
+    loop();
   }
   // down arrow key
   else if (e.which === 40 && snake.dy === 0) {
     snake.dy = grid;
     snake.dx = 0;
+    loop();
   }
 });
 
 // start the game
-requestAnimationFrame(loop);
+setInterval(loop, 100);
 </script>
 </body>
 </html>
