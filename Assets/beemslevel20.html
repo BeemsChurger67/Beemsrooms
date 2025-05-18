@@ -97,7 +97,7 @@
     const FinalBossTheme = new Audio('FinalBossTheme.mp3');
     function skip() {
         document.getElementById("beginning").style.display = "none"; // Hide the beginning section
-        const FinalBossTheme = new Audio('FinalBossTheme.mp3');
+        FinalBossTheme.volume = 0.5;
         FinalBossTheme.loop = true;
         FinalBossTheme.play();
         setTimeout(() => {
@@ -123,7 +123,7 @@
         document.getElementById("dialogue").innerHTML = dialogue[currentDialogue];
         if (currentDialogue >= dialogue.length) {
             document.getElementById("beginning").style.display = "none"; // Hide the beginning section
-            FinalBossTheme.volume = 0.6;
+            FinalBossTheme.volume = 0.5;
             FinalBossTheme.loop = true;
             FinalBossTheme.play();
             setTimeout(() => {
@@ -160,6 +160,7 @@
         document.body.style.backgroundImage = "url('redblackgradient.png')"; // Replace 'your-image.jpg' with the path to your image
         document.body.style.backgroundSize = "cover"; // Ensures the image covers the entire screen
         document.body.style.backgroundRepeat = "no-repeat"; // Prevents tiling
+        document.body.style.backgroundColor = "red";
         let player = new Image();
         player.src = 'stupidcat.png'
         let keys = {};
@@ -550,8 +551,8 @@
             const centerY = playercanvas.height / 2;
             const warningDuration = 500; // Duration of the warning in milliseconds
             const attackDuration = 3500; // Duration of the spiral barrage in milliseconds
-            const interval = 50; // Time between each projectile spawn
-            const speed = 3; // Speed of the projectiles
+            const interval = 25; // Time between each projectile spawn
+            const speed = 3.2; // Speed of the projectiles
 
             // Spawn a warning at the center of the canvas
             spawnWarning(centerX - 50, centerY - 50, 100, 100, warningDuration);
